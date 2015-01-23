@@ -61,6 +61,13 @@ public class Game extends BasicGame
 			
 			appgc = new AppGameContainer(Game.scalableGame);
 			appgc.setDisplayMode(width, height, false);
+			
+			// Fixed timestep, 60 fps.
+			appgc.setTargetFrameRate(60);
+			appgc.setMinimumLogicUpdateInterval(16);
+			appgc.setMaximumLogicUpdateInterval(16);
+			appgc.setVSync(true);
+			
 			appgc.start();
 		}
 		catch (SlickException ex)
