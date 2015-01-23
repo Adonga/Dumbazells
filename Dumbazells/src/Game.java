@@ -21,6 +21,8 @@ public class Game extends BasicGame
 	private Basis[] basen;
 	
 	private Bazell bazelle;
+	private CommandMap commandMap;
+	
 	public Game() {
 		super("Dumbazells");
 	}
@@ -30,12 +32,13 @@ public class Game extends BasicGame
 		players = new Player[] { new Player(0), new Player(1) };
 		basen = new Basis[] { new Basis(players[0], new Vector2f(8.0f, 5.0f)) };
 		bazelle = new Bazell(0, new Vector2f(1,1));
+		commandMap = new CommandMap();
 	}
 
 	@Override
 	public void update(GameContainer gc, int passedTimeMS) throws SlickException {
 		for(Player player : players) {
-			player.update(gc.getInput(), passedTimeMS);
+			player.update(gc.getInput());
 		}
 
 		for (Basis base : basen) {
@@ -48,8 +51,10 @@ public class Game extends BasicGame
 	@Override
 
 	public void render(GameContainer gc, Graphics g) throws SlickException 	{
+		commandMap.draw(g);
+		
 		for(Player player : players) {
-			player.render(g);
+			player.render(commandMap, g);
 		}
 
 		bazelle.render(g);
