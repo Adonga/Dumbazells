@@ -10,25 +10,29 @@ import org.newdawn.slick.SlickException;
 
 public class Game extends BasicGame
 {
-	public Game()
-	{
+	private Player[] players;
+	
+	public Game() {
 		super("Dumbazells");
 	}
 
 	@Override
 	public void init(GameContainer gc) throws SlickException {
-		
+		players = new Player[] { new Player(0), new Player(1) };
 	}
 
 	@Override
-	public void update(GameContainer gc, int i) throws SlickException {
-		
+	public void update(GameContainer gc, int passedTimeMS) throws SlickException {
+		for(Player player : players) {
+			player.update(gc.getInput(), passedTimeMS);
+		}
 	}
 
 	@Override
-	public void render(GameContainer gc, Graphics g) throws SlickException
-	{
-		g.drawString("Howdy!", 100, 10);
+	public void render(GameContainer gc, Graphics g) throws SlickException 	{
+		for(Player player : players) {
+			player.render(g);
+		}
 	}
 
 	public static void main(String[] args)
@@ -37,7 +41,7 @@ public class Game extends BasicGame
 		{
 			AppGameContainer appgc;
 			appgc = new AppGameContainer(new Game());
-			appgc.setDisplayMode(640, 480, false);
+			appgc.setDisplayMode(1024, 768, false);
 			appgc.start();
 		}
 		catch (SlickException ex)
