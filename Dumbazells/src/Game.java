@@ -1,6 +1,6 @@
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.util.ArrayList;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -15,21 +15,31 @@ import org.newdawn.slick.SlickException;
 
 public class Game extends BasicGame
 {
+	public static final Vector2f GAME_COORD_SIZE = new Vector2f(16.0f, 9.0f);
+
 	private Player[] players;
+
 	private static ScalableGame scalableGame;
 
 	private Basis[] basen;
-	
-	private Bazell bazelle;
+
+	Random rand = new Random();
+
 	public Game() {
 		super("Dumbazells");
 	}
 
 	@Override
 	public void init(GameContainer gc) throws SlickException {
+
 		players = new Player[] { new Player(0), new Player(1) };
-		basen = new Basis[] { new Basis(players[0], new Vector2f(8.0f, 5.0f)) };
-		bazelle = new Bazell(0, new Vector2f(1,1));
+		basen = new Basis[] {
+				new Basis(players[0], new Vector2f(Basis.BASE_SIZE + Basis.BASE_SIDE_DEADZONE + (float)Math.random() * (GAME_COORD_SIZE.getX() - 2*(Basis.BASE_SIZE + Basis.BASE_SIDE_DEADZONE)),
+						Basis.BASE_SIZE + Basis.BASE_SIDE_DEADZONE + (float)Math.random() * (GAME_COORD_SIZE.getY() - 2*(Basis.BASE_SIZE + Basis.BASE_SIDE_DEADZONE)))),
+				new Basis(players[1], new Vector2f(Basis.BASE_SIZE + Basis.BASE_SIDE_DEADZONE + (float)Math.random() * (GAME_COORD_SIZE.getX() - 2*(Basis.BASE_SIZE + Basis.BASE_SIDE_DEADZONE)),
+						Basis.BASE_SIZE + Basis.BASE_SIDE_DEADZONE + (float)Math.random() * (GAME_COORD_SIZE.getY() - 2*(Basis.BASE_SIZE + Basis.BASE_SIDE_DEADZONE))))
+		};
+
 	}
 
 	@Override
@@ -39,10 +49,8 @@ public class Game extends BasicGame
 		}
 
 		for (Basis base : basen) {
-			base.update(passedTimeMS);
+			base.update(gc, passedTimeMS);
 		}
-
-		bazelle.update(passedTimeMS);
 	}
 
 	@Override
@@ -51,8 +59,6 @@ public class Game extends BasicGame
 		for(Player player : players) {
 			player.render(g);
 		}
-
-		bazelle.render(g);
 
 		for (Basis base : basen) {
 			base.render(g);
