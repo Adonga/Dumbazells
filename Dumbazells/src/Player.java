@@ -19,4 +19,8 @@ public class Player {
 		g.setColor(Color.pink);
 		g.draw(new Circle(100, 100, 10));
 	}
+
+	public int getControlerIndex() {
+		return controlerIndex;
+	}
 }
