@@ -39,6 +39,6 @@ public class Player {
 	}
 
 	public int getControlerIndex() {
-		return controlerIndex;
+		return controllerIndex;
 	}
 }

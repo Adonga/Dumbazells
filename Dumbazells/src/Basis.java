@@ -20,9 +20,7 @@ public class Basis {
     }
 
     public void spawnBazels() {
-
-        // TODO: remove first argument (livingtime) !
-        Bazell spawnedBazell = new Bazell(0.5f, ownedBy.getControlerIndex(), basePosition);
+        Bazell spawnedBazell = new Bazell(ownedBy.getControlerIndex(), basePosition);
 
         if (ownBazells.size() <= MAX_NUMBER_BAZELLS) {
             ownBazells.add(spawnedBazell);
