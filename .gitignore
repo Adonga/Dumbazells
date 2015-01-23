@@ -14,3 +14,5 @@ RemoteSystemsTempFiles/.project
 Dumbazells/.classpath
 slick/
 .recommenders/
+*.iml
+.idea/
