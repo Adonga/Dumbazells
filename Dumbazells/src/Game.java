@@ -3,7 +3,6 @@ import java.awt.GraphicsEnvironment;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector2f;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.GameContainer;
@@ -26,7 +25,7 @@ public class Game extends BasicGame
 	@Override
 	public void init(GameContainer gc) throws SlickException {
 		players = new Player[] { new Player(0), new Player(1) };
-		bazelle = new Bazell(10, 0, new Vector2f(100,100));
+		bazelle = new Bazell(0, new Vector2f(0,0));
 	}
 
 	@Override
