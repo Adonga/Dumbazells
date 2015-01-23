@@ -20,6 +20,7 @@ public class Basis {
     }
 
     public void spawnBazels() {
+
         Bazell spawnedBazell = new Bazell(ownedBy.getControlerIndex(), basePosition);
 
         if (ownBazells.size() <= MAX_NUMBER_BAZELLS) {

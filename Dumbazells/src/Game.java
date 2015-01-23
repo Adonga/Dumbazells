@@ -25,7 +25,7 @@ public class Game extends BasicGame
 	@Override
 	public void init(GameContainer gc) throws SlickException {
 		players = new Player[] { new Player(0), new Player(1) };
-		bazelle = new Bazell(0, new Vector2f(0,0));
+		bazelle = new Bazell(0, new Vector2f(1,1));
 	}
 
 	@Override
@@ -33,7 +33,7 @@ public class Game extends BasicGame
 		for(Player player : players) {
 			player.update(gc.getInput(), passedTimeMS);
 		}
-		bazelle.update(gc.getInput(), passedTimeMS);
+		bazelle.update(passedTimeMS);
 	}
 
 	@Override
