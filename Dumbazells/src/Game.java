@@ -1,5 +1,6 @@
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -17,6 +18,8 @@ public class Game extends BasicGame
 {
 	private Player[] players;
 	private static ScalableGame scalableGame;
+
+	private Basis[] basen;
 	
 	private Bazell bazelle;
 	public Game() {
@@ -27,6 +30,7 @@ public class Game extends BasicGame
 	public void init(GameContainer gc) throws SlickException {
 		players = new Player[] { new Player(0), new Player(1) };
 		bazelle = new Bazell(10, 0, new Vector2f(100,100));
+		basen = new Basis[] { new Basis(players[0], new Vector2f(8.0f, 5.0f)) };
 	}
 
 	@Override
@@ -35,6 +39,9 @@ public class Game extends BasicGame
 			player.update(gc.getInput(), passedTimeMS);
 		}
 		bazelle.update(gc.getInput(), passedTimeMS);
+		for (Basis base : basen) {
+			base.update(passedTimeMS);
+		}
 	}
 
 	@Override
@@ -43,7 +50,12 @@ public class Game extends BasicGame
 		for(Player player : players) {
 			player.render(g);
 		}
+
 		bazelle.render(g);
+
+		for (Basis base : basen) {
+			base.render(g);
+		}
 	}
 
 	public static void main(String[] args)
