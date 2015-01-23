@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector2f;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.GameContainer;
@@ -29,8 +28,8 @@ public class Game extends BasicGame
 	@Override
 	public void init(GameContainer gc) throws SlickException {
 		players = new Player[] { new Player(0), new Player(1) };
-		bazelle = new Bazell(10, 0, new Vector2f(100,100));
 		basen = new Basis[] { new Basis(players[0], new Vector2f(8.0f, 5.0f)) };
+		bazelle = new Bazell(0, new Vector2f(1,1));
 	}
 
 	@Override
@@ -38,10 +37,12 @@ public class Game extends BasicGame
 		for(Player player : players) {
 			player.update(gc.getInput(), passedTimeMS);
 		}
-		bazelle.update(gc.getInput(), passedTimeMS);
+
 		for (Basis base : basen) {
 			base.update(passedTimeMS);
 		}
+
+		bazelle.update(passedTimeMS);
 	}
 
 	@Override
@@ -74,6 +75,13 @@ public class Game extends BasicGame
 			
 			appgc = new AppGameContainer(Game.scalableGame);
 			appgc.setDisplayMode(width, height, false);
+			
+			// Fixed timestep, 60 fps.
+			appgc.setTargetFrameRate(60);
+			appgc.setMinimumLogicUpdateInterval(16);
+			appgc.setMaximumLogicUpdateInterval(16);
+			appgc.setVSync(true);
+			
 			appgc.start();
 		}
 		catch (SlickException ex)
