@@ -22,8 +22,9 @@ public class Game extends BasicGame
 	private static ScalableGame scalableGame;
 
 	private Basis[] basen;
-
-	Random rand = new Random();
+	
+	private Bazell bazelle;
+	private CommandMap commandMap;
 
 	public Game() {
 		super("Dumbazells");
@@ -39,13 +40,13 @@ public class Game extends BasicGame
 				new Basis(players[1], new Vector2f(Basis.BASE_SIZE + Basis.BASE_SIDE_DEADZONE + (float)Math.random() * (GAME_COORD_SIZE.getX() - 2*(Basis.BASE_SIZE + Basis.BASE_SIDE_DEADZONE)),
 						Basis.BASE_SIZE + Basis.BASE_SIDE_DEADZONE + (float)Math.random() * (GAME_COORD_SIZE.getY() - 2*(Basis.BASE_SIZE + Basis.BASE_SIDE_DEADZONE))))
 		};
-
+		commandMap = new CommandMap();
 	}
 
 	@Override
 	public void update(GameContainer gc, int passedTimeMS) throws SlickException {
 		for(Player player : players) {
-			player.update(gc.getInput(), passedTimeMS);
+			player.update(gc.getInput());
 		}
 
 		for (Basis base : basen) {
@@ -56,8 +57,10 @@ public class Game extends BasicGame
 	@Override
 
 	public void render(GameContainer gc, Graphics g) throws SlickException 	{
+		commandMap.draw(g);
+		
 		for(Player player : players) {
-			player.render(g);
+			player.render(commandMap, g);
 		}
 
 		for (Basis base : basen) {
