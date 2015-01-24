@@ -93,11 +93,11 @@ public class Game extends BasicGame
 			for (Flag flag : flags) {
 				flag.update(gc, passedTimeMS);
 			}
-			gameState.restart(gc.getInput());
+			gameState.restart();
 			
 		}
 		else {
-			gameState.restart(gc.getInput());
+			gameState.restartAfterGameOverOrWon();
 		}
 	}
 
