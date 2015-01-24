@@ -24,6 +24,10 @@ public class Basis {
     Image baseRaute;
 
     private float changingSpawnRate = 0.0f;
+    
+    private int numFlags = 0;
+    
+    int GetNumFlags() { return numFlags; }
 
     public Basis(Player owner, Vector2f position, BaseTypes baseType) {
         this.ownedBy = owner;
@@ -90,6 +94,13 @@ public class Basis {
         		continue;
         	}
         	ownBazells.get(i).update(commandMap, flags, this, enemyBazells);
+        }
+        
+        // count flags
+        numFlags = 0;
+        for(Flag flag : flags) {
+        	if(flag.getPosition().distance(getPosition()) < BASE_SIZE)
+        		++numFlags;
         }
     }
 

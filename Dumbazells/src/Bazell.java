@@ -19,8 +19,8 @@ public class Bazell {
 	final float MAX_SPEED = 0.15f;
 	final float FLAG_SPEED = NORMAL_SPEED * 0.1f;
 	
-	final float FLAG_GATHER_RADIUS = ACTION_RADIUS * 3.0f;
-	final float FLAG_GO_RADIUS = FLAG_GATHER_RADIUS * 10.0f;
+	final float FLAG_GATHER_RADIUS = ACTION_RADIUS;
+	final float FLAG_GO_RADIUS = FLAG_GATHER_RADIUS * 4.0f;
 
 	final float STEPS_TO_AGGRO = 300;
 	private float passedSteps;
@@ -199,7 +199,7 @@ public class Bazell {
 			float minDistSq = 10000.0f;
 			Flag bestFlag = null;
 			for(Flag flag : flags) {
-				if(flag.getCarriedBy() != null) continue; // ignore carried flags
+				if (flag.getCarriedBy() != null) continue; // ignore carried flags
 				if (flag.getPosition().distance(ownBase.getPosition()) < Basis.BASE_SIZE) continue;
 				
 				float newDistSq = flag.getPosition().distanceSquared(position);

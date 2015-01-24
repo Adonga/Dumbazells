@@ -88,6 +88,9 @@ public class Game extends BasicGame
 
 			for (Basis base : basen) {
 				base.update(gc, commandMap, flags,basen);
+				if(base.GetNumFlags() >= 3) {
+					// todo win.
+				}
 			}
 
 			for (Flag flag : flags) {
