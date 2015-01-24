@@ -1,7 +1,7 @@
-import org.lwjgl.util.vector.Vector2f;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.geom.Vector2f;
 
 import java.util.ArrayList;
 
@@ -24,13 +24,12 @@ public class Basis {
     }
 
     // TODO: stop spawning if x Bazells in Base
-    public void spawnBazels() {
+    private void spawnBazels() {
 
         if (ownBazells.size() < MAX_NUMBER_BAZELLS) {
             Bazell spawnedBazell = new Bazell(ownedBy.getControlerIndex(), new Vector2f(basePosition));
             ownBazells.add(spawnedBazell);
         }
-
     }
 
     public void update(GameContainer gc, int passedTimeMS, CommandMap commandMap) {
@@ -47,6 +46,7 @@ public class Basis {
     }
 
     public void render(Graphics graphics) {
+
         graphics.setColor(Color.orange);
         graphics.fillOval(basePosition.x - BASE_SIZE/2, basePosition.y - BASE_SIZE/2, BASE_SIZE, BASE_SIZE);
 

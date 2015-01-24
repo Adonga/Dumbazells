@@ -3,13 +3,13 @@ import java.awt.GraphicsEnvironment;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.lwjgl.util.vector.Vector2f;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.ScalableGame;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.geom.Vector2f;
 
 
 public class Game extends BasicGame
@@ -43,11 +43,11 @@ public class Game extends BasicGame
 
 		flags = new Flag[] {
 				new Flag(new Vector2f(Flag.FLAG_SIZE + Basis.BASE_SIDE_DEADZONE + (float)Math.random() * (GAME_COORD_SIZE.getX() - 2*(Flag.FLAG_SIZE + Basis.BASE_SIDE_DEADZONE)),
-						Flag.FLAG_SIZE + Basis.BASE_SIDE_DEADZONE + (float)Math.random() * (GAME_COORD_SIZE.getY() - 2*(Flag.FLAG_SIZE + Basis.BASE_SIDE_DEADZONE)))),
+						Flag.FLAG_SIZE + Basis.BASE_SIDE_DEADZONE + (float)Math.random() * (GAME_COORD_SIZE.getY() - 2*(Flag.FLAG_SIZE + Basis.BASE_SIDE_DEADZONE))), basen),
 				new Flag(new Vector2f(Flag.FLAG_SIZE + Basis.BASE_SIDE_DEADZONE + (float)Math.random() * (GAME_COORD_SIZE.getX() - 2*(Flag.FLAG_SIZE + Basis.BASE_SIDE_DEADZONE)),
-						Flag.FLAG_SIZE + Basis.BASE_SIDE_DEADZONE + (float)Math.random() * (GAME_COORD_SIZE.getY() - 2*(Flag.FLAG_SIZE + Basis.BASE_SIDE_DEADZONE)))),
+						Flag.FLAG_SIZE + Basis.BASE_SIDE_DEADZONE + (float)Math.random() * (GAME_COORD_SIZE.getY() - 2*(Flag.FLAG_SIZE + Basis.BASE_SIDE_DEADZONE))), basen),
 				new Flag(new Vector2f(Flag.FLAG_SIZE + Basis.BASE_SIDE_DEADZONE + (float)Math.random() * (GAME_COORD_SIZE.getX() - 2*(Flag.FLAG_SIZE + Basis.BASE_SIDE_DEADZONE)),
-						Flag.FLAG_SIZE + Basis.BASE_SIDE_DEADZONE + (float)Math.random() * (GAME_COORD_SIZE.getY() - 2*(Flag.FLAG_SIZE + Basis.BASE_SIDE_DEADZONE))))
+						Flag.FLAG_SIZE + Basis.BASE_SIDE_DEADZONE + (float)Math.random() * (GAME_COORD_SIZE.getY() - 2*(Flag.FLAG_SIZE + Basis.BASE_SIDE_DEADZONE))), basen)
 		};
 
 		commandMap = new CommandMap();
@@ -62,7 +62,7 @@ public class Game extends BasicGame
 		for (Basis base : basen) {
 			base.update(gc, passedTimeMS,commandMap);
 		}
-		
+
 		for (Flag flag : flags) {
 			flag.update(gc, passedTimeMS);
 		}

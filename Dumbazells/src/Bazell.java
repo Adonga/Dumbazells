@@ -1,8 +1,8 @@
 
-import org.lwjgl.util.vector.Vector2f;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.geom.Vector2f;
 
 
 public class Bazell {
