@@ -4,6 +4,7 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Circle;
+import org.lwjgl.opengl.*;
 
 
 public class CommandMap {
@@ -21,7 +22,7 @@ public class CommandMap {
 	private Image commandImage;
 	private Graphics commandImageG;
 	
-	private static final int FADE_INTERVAL = 40; 
+	private static final int FADE_INTERVAL = 1; 
 	private int drawsSinceLastFade = 0;
 	
 	public CommandMap() throws SlickException {
@@ -43,12 +44,19 @@ public class CommandMap {
 	}
 	
 	public void draw(Graphics g) {
-	/*	++drawsSinceLastFade;
+		++drawsSinceLastFade;
 		if(drawsSinceLastFade > FADE_INTERVAL) { 
-			commandImageG.setColor(new Color(0.0f, 0.0f, 0.0f, 0.05f));
+			commandImageG.setDrawMode(Graphics.MODE_ADD);
+			
+			GL14.glBlendEquation(GL14.GL_FUNC_REVERSE_SUBTRACT);
+			
+			commandImageG.setColor(new Color(1.0f/255.0f, 1.0f/255.0f, 1.0f/255.0f, 0.0f));
 			commandImageG.fillRect(0, 0, RESOLUTION_X, RESOLUTION_Y);
 			drawsSinceLastFade = 0;
-		}*/
+			
+			GL14.glBlendEquation(GL14.GL_FUNC_ADD);
+			commandImageG.setDrawMode(Graphics.MODE_NORMAL);
+		}
 		
 		commandImageG.flush();
 		g.drawImage(commandImage, 0,0, Game.GAME_COORD_SIZE.x, Game.GAME_COORD_SIZE.y, 0,0, RESOLUTION_X, RESOLUTION_Y);
