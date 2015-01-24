@@ -50,7 +50,7 @@ public class Basis {
         }
 
         for (Bazell bazell : ownBazells) {
-            bazell.update(commandMap, flags);
+            bazell.update(commandMap, flags, this);
         }
     }
 
@@ -79,7 +79,7 @@ public class Basis {
         }
     }
 
-    public Vector2f getBasePosition() {
+    public Vector2f getPosition() {
         return basePosition;
     }
 

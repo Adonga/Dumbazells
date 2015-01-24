@@ -14,8 +14,9 @@ public class Bazell {
 	final float SCALE = 0.01f; 			// scaling the image
 	
 	final float FRICTION = 0.98f;
-	final float ACCELERATION = 0.00001f;	// the added movementspeed that it gets by each bounce
-	final float MIN_SPEED = 0.01f;
+	final float ACCELERATION = 0.00008f;	// the added movementspeed that it gets by each bounce
+	final float NORMAL_SPEED = 0.01f;
+	final float FLAG_SPEED = NORMAL_SPEED * 0.1f;
 	
 	final float FLAG_GATHER_RADIUS = SCALE * 3.0f;
 	final float FLAG_GO_RADIUS = FLAG_GATHER_RADIUS * 6.0f;
@@ -97,8 +98,8 @@ public class Bazell {
 	//makes the bazell run in runCommand and accelrerate until certain point
 	private void running()
 	{
-		if(speed < MIN_SPEED)
-			speed = MIN_SPEED;
+		if(speed < NORMAL_SPEED)
+			speed = NORMAL_SPEED;
 		
 		// accellerate a bit
 		speed += ACCELERATION;
@@ -107,8 +108,8 @@ public class Bazell {
 	//makes that Bazell attacks
 	private void attacking(Bazell otherBazell)
 	{
-		if(speed < MIN_SPEED)
-			speed = MIN_SPEED;
+		if(speed < NORMAL_SPEED)
+			speed = NORMAL_SPEED;
 		
 		if(playerIndex != otherBazell.getPlayer()){
 			otherBazell.health--;
@@ -118,8 +119,8 @@ public class Bazell {
 
 	private void carries(Flag[] flags)
 	{
-		if(speed < MIN_SPEED)
-			speed = MIN_SPEED;
+		if(speed < FLAG_SPEED)
+			speed = FLAG_SPEED;
 		
 		if(owningFlag == null) {
 			float minDistSq = 10000.0f;
@@ -151,7 +152,7 @@ public class Bazell {
 			//die
 	}
 	
-	public void update(CommandMap commandMap, Flag[] flags){
+	public void update(CommandMap commandMap, Flag[] flags, Basis ownBasis){
 		oldPosition = new Vector2f(position);
 
 		direction.normalise();
@@ -216,6 +217,11 @@ public class Bazell {
 //			runAmok(commandMap, otherBazell);
 //			}
 
+		// lose flag at own base
+		if(owningFlag != null && ownBasis.getPosition().distance(position) < Basis.BASE_SIZE) {
+			owningFlag.setCarriedBy(null);
+			owningFlag = null;
+		}
 	}
 	
 	
