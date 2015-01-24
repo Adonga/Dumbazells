@@ -11,7 +11,7 @@ public class Bazell {
 	private int playerIndex;
 	
 	final float TIMER = 5; 				//Time until Bazell runs Amok 
-	final float ACTION_RADIUS = 0.5f; 			// scaling the image
+	final float ACTION_RADIUS = 0.5f; 
 	
 	final float FRICTION = 0.99f;
 	final float ACCELERATION = 0.00004f;	// the added movementspeed that it gets by each bounce
@@ -19,7 +19,7 @@ public class Bazell {
 	final float FLAG_SPEED = NORMAL_SPEED * 0.1f;
 	
 	final float FLAG_GATHER_RADIUS = ACTION_RADIUS * 3.0f;
-	final float FLAG_GO_RADIUS = FLAG_GATHER_RADIUS * 6.0f;
+	final float FLAG_GO_RADIUS = FLAG_GATHER_RADIUS * 10.0f;
 
 	final float STEPS_TO_AGGRO = 300;
 	private float passedSteps;

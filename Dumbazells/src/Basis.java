@@ -6,7 +6,7 @@ import java.util.ArrayList;
 public class Basis {
 
     public static final int MAX_NUMBER_BAZELLS = 15;
-    public static final float BASE_SIZE = 0.5f;
+    public static final float BASE_SIZE = 1.0f;
     public static final float BASE_SIDE_DEADZONE = 0.3f;
     public static final int MAX_BAZELLS_IN_BASE = 5;
 
