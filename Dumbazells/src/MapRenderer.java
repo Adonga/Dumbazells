@@ -7,7 +7,7 @@ import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureImpl;
 
 class MapRenderer {
-    static final int NUM_PARTICLES = 100;
+    static final int NUM_PARTICLES = 300;
     static final int TEXTURE_SIZE = 256;
     private Image battleGroundParticles[];
     private Image runGroundParticles[];
@@ -61,7 +61,7 @@ class MapRenderer {
             particles[i].position = new Vector2f();
      //       particles[i].show = false;
             randomizePosScale(i);
-            assignSprite(i, (CommandType)(0));
+            assignSprite(i, i % 4);
         }
     }
 
@@ -76,7 +76,7 @@ class MapRenderer {
              //   particles[i].show = false;  // Force assignSprite to rebuild
                 randomizePosScale(i);
                 particles[i].lifeTime = 1.0f;
-                assignSprite(i, commandType);
+                //assignSprite(i, commandType);
             }
             //assignSprite(i, commandType);
         }
@@ -135,14 +135,15 @@ class MapRenderer {
         GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
     }
 
-    private void assignSprite(int particleID, CommandType commandType) {
+    private void assignSprite(int particleID, int type) {
         //if(!particles[particleID].show) {
         //    particles[particleID].show = true;
          //   particles[particleID].lifeTime = 1.0f;
         ///}
-        if(commandType == CommandType.ATTACK)     { particles[particleID].sprite = battleGroundParticles[0]; particles[particleID].type = 0; }
-        else if(commandType == CommandType.RUN)   { particles[particleID].sprite = runGroundParticles[0]; particles[particleID].type = 2; }
-        else if(commandType == CommandType.CATCH) { particles[particleID].sprite = takeGroundParticles[0]; particles[particleID].type = 1; }
-        else { particles[particleID].sprite = voidGroundParticles[0]; particles[particleID].type = 3; }
+        if(type == 0)      particles[particleID].sprite = battleGroundParticles[0];
+        else if(type == 2) particles[particleID].sprite = runGroundParticles[0];
+        else if(type == 1) particles[particleID].sprite = takeGroundParticles[0];
+        else particles[particleID].sprite = voidGroundParticles[0];
+        particles[particleID].type = type;
     }
 }
