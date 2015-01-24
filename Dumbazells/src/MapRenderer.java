@@ -5,7 +5,7 @@ import org.lwjgl.opengl.*;
 import org.newdawn.slick.geom.Vector2f;
 
 class MapRenderer {
-    static final int NUM_PARTICLES = 1d00;
+    static final int NUM_PARTICLES = 100;
     static final int TEXTURE_SIZE = 256;
     private Image battleGroundParticles[];
     private Image runGroundParticles[];

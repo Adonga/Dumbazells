@@ -39,11 +39,6 @@ public class Game extends BasicGame
 	@Override
 	public void init(GameContainer gc) throws SlickException {
 
-		flags = new Flag[] {
-				new Flag(Flag.randFlagPosition(basen), basen),
-				new Flag(Flag.randFlagPosition(basen), basen),
-				new Flag(Flag.randFlagPosition(basen), basen)
-		};
 		commandMap = new CommandMap();
 
 		mapRenderer = new MapRenderer();
