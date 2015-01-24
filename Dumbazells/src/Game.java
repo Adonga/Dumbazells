@@ -32,6 +32,7 @@ public class Game extends BasicGame
 	private Basis[] basen;
 	private Flag[] flags;
 	int i=0;
+	int j = 0;
 	public Game() {
 		super("Dumbazells");
 	}
@@ -46,12 +47,16 @@ public class Game extends BasicGame
 
 	@Override
 	public void update(GameContainer gc, int passedTimeMS) throws SlickException {
-
+		
+		
+		mapRenderer.updateLogic(commandMap);
 		
 		if(gameState.registering){
 
-			playerRegisterd = gameState.init(gc.getInput());
-
+			if(j %10 ==0)
+				playerRegisterd = gameState.init(gc.getInput());
+			j++;
+			
 			if (playerRegisterd > 4)
 				playerRegisterd = MAX_NUM_PLAYERS;
 
