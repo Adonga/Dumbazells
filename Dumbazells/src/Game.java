@@ -57,7 +57,7 @@ public class Game extends BasicGame
 		}
 
 		for (Basis base : basen) {
-			base.update(gc, passedTimeMS,commandMap);
+			base.update(gc, commandMap, flags);
 		}
 
 		for (Flag flag : flags) {
