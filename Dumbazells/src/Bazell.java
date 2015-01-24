@@ -1,4 +1,5 @@
 import java.awt.HeadlessException;
+import java.util.ArrayList;
 
 import org.newdawn.slick.geom.Vector2f;
 import org.newdawn.slick.Graphics;
@@ -21,11 +22,6 @@ public class Bazell {
 	final float FLAG_GATHER_RADIUS = SCALE * 3.0f;
 	final float FLAG_GO_RADIUS = FLAG_GATHER_RADIUS * 6.0f;
 	
-	final float ATK = 0.1f;
-	final float FULL_HEALTH = 1f;
-	
-	
-	float health;
 	float speed = 0.0f; 				// initial speed when in command area for moveing
 	float timerForAmok; 				//timer for the Amok
 	float amokTime = 3;
@@ -44,13 +40,16 @@ public class Bazell {
 	
 	private Flag owningFlag = null;
 	
+	private boolean deleted = false;
+	
+	public boolean NeedsDelete() { return deleted; }
+	
 	public Bazell(int PlayerIndex,Vector2f position)
 	{
 		playerIndex = PlayerIndex;
 		this.position = position;
 		this.direction = new Vector2f(-1,-1);
 		timerForAmok = TIMER;
-		health = FULL_HEALTH;
 		String ref = "images/Bazell.png";
 		try {
 			sprite = new Image(ref);
@@ -106,15 +105,48 @@ public class Bazell {
 	}
 	
 	//makes that Bazell attacks
-	private void attacking(Bazell otherBazell)
-	{
+	private void attacking(ArrayList<Bazell> otherBazell) {
 		if(speed < NORMAL_SPEED)
 			speed = NORMAL_SPEED;
 		
-		if(playerIndex != otherBazell.getPlayer()){
-			otherBazell.health--;
+		// binary search enemy bazells - search first index which is smaller than position.x-SCALE
+		float smallerThanX = position.x-SCALE;
+		int min = 0;
+		int max = otherBazell.size();
+		while(max - min >= 1) {
+			int mid = (max + min) / 2;
+			
+			Bazell other = otherBazell.get(mid); 		
+			if(other.getPosition().x+SCALE < smallerThanX) {
+				min = mid + 1;
+			} else {
+				max = mid;
+			}
 		}
-		position = position.sub(otherBazell.getPosition().normalise());
+		
+		for(int i=min; i<otherBazell.size(); ++i) {
+			Bazell other = otherBazell.get(i); 
+			if(other.getPosition().x - SCALE > position.x + SCALE) // won't find anything anymore
+				break;
+			
+			// kill?
+			if(other.getPosition().distanceSquared(position) < SCALE * SCALE) {
+				deleted = true;
+				if(owningFlag != null) {
+					owningFlag.setCarriedBy(null);
+					owningFlag = null;
+				}
+				
+				other.deleted = true;
+				if(other.owningFlag != null) {
+					other.owningFlag.setCarriedBy(null);
+					other.owningFlag = null;
+				}
+				
+				System.out.println("kill!");
+				break;
+			}
+		}
 	}
 
 	private void carries(Flag[] flags)
@@ -152,7 +184,9 @@ public class Bazell {
 			//die
 	}
 	
-	public void update(CommandMap commandMap, Flag[] flags, Basis ownBasis){
+	public void update(CommandMap commandMap, Flag[] flags, Basis ownBasis, ArrayList<Bazell> enemyBazells){
+		if(deleted) return;
+		
 		oldPosition = new Vector2f(position);
 
 		direction.normalise();
@@ -175,6 +209,9 @@ public class Bazell {
 			else if(commandArea == CommandType.RUN) { 
 				this.running();
 			} 
+			else if(commandArea == CommandType.ATTACK) {
+				this.attacking(enemyBazells);
+			}
 			
 			bouncedLastFrame = false;
 		}
