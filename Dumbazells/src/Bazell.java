@@ -149,8 +149,7 @@ public class Bazell {
 		}
 	}
 
-	private void carries(Flag[] flags)
-	{
+	private void carries(Flag[] flags) {
 		if(speed < FLAG_SPEED)
 			speed = FLAG_SPEED;
 		
@@ -158,6 +157,8 @@ public class Bazell {
 			float minDistSq = 10000.0f;
 			Flag bestFlag = null;
 			for(Flag flag : flags) {
+				if(flag.getCarriedBy() != null) continue; // ignore carried flags
+				
 				float newDistSq = flag.getPosition().distanceSquared(position);
 				if(newDistSq < minDistSq) {
 					minDistSq = newDistSq;
