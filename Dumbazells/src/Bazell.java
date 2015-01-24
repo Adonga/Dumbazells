@@ -103,4 +103,10 @@ public class Bazell {
 	public Vector2f getPosition() {
 		return position;
 	}
+
+	// Reflects the internal direction at the map gradient
+	private void reflectAtMap(CommandMap commandMap) {
+		Vector2f gradient = commandMap.getBoundaryGradient(position);
+		direction = direction.sub(gradient.scale(2 * gradient.dot(direction)));
+	}
 }
