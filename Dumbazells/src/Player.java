@@ -83,8 +83,11 @@ public class Player {
 			movementY *= 2.0f;
 		}
 		
-		paintCircle.setCenterX(paintCircle.getCenterX() + movementX);
-		paintCircle.setCenterY(paintCircle.getCenterY() + movementY);
+		if(paintCircle.getCenterX() + movementX>=0 &&paintCircle.getCenterX() + movementX<=16  )
+			paintCircle.setCenterX(paintCircle.getCenterX() + movementX);
+		
+		if(paintCircle.getCenterY() + movementY>=0 && paintCircle.getCenterY() + movementY<=9 )
+			paintCircle.setCenterY(paintCircle.getCenterY() + movementY);
 		
 	}
 	

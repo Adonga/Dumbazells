@@ -43,12 +43,12 @@ public class CommandMap {
 	}
 	
 	public void draw(Graphics g) {
-		++drawsSinceLastFade;
+	/*	++drawsSinceLastFade;
 		if(drawsSinceLastFade > FADE_INTERVAL) { 
 			commandImageG.setColor(new Color(0.0f, 0.0f, 0.0f, 0.05f));
 			commandImageG.fillRect(0, 0, RESOLUTION_X, RESOLUTION_Y);
 			drawsSinceLastFade = 0;
-		}
+		}*/
 		
 		commandImageG.flush();
 		g.drawImage(commandImage, 0,0, Game.GAME_COORD_SIZE.x, Game.GAME_COORD_SIZE.y, 0,0, RESOLUTION_X, RESOLUTION_Y);
