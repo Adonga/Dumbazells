@@ -23,6 +23,7 @@ public class Basis {
         this.basePosition = position;
     }
 
+    // TODO: stop spawning if x Bazells in Base
     public void spawnBazels() {
 
         if (ownBazells.size() < MAX_NUMBER_BAZELLS) {

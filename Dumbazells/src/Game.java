@@ -1,6 +1,5 @@
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -16,15 +15,15 @@ import org.newdawn.slick.SlickException;
 public class Game extends BasicGame
 {
 	public static final Vector2f GAME_COORD_SIZE = new Vector2f(16.0f, 9.0f);
-
-	private Player[] players;
+	public static final int NUM_FLAGS = 3;
 
 	private static ScalableGame scalableGame;
 
-	private Basis[] basen;
-	
-	private Bazell bazelle;
 	private CommandMap commandMap;
+
+	private Player[] players;
+	private Basis[] basen;
+	private Flag[] flags;
 
 	public Game() {
 		super("Dumbazells");
@@ -34,12 +33,23 @@ public class Game extends BasicGame
 	public void init(GameContainer gc) throws SlickException {
 
 		players = new Player[] { new Player(0), new Player(1) };
+
 		basen = new Basis[] {
 				new Basis(players[0], new Vector2f(Basis.BASE_SIZE + Basis.BASE_SIDE_DEADZONE + (float)Math.random() * (GAME_COORD_SIZE.getX() - 2*(Basis.BASE_SIZE + Basis.BASE_SIDE_DEADZONE)),
 						Basis.BASE_SIZE + Basis.BASE_SIDE_DEADZONE + (float)Math.random() * (GAME_COORD_SIZE.getY() - 2*(Basis.BASE_SIZE + Basis.BASE_SIDE_DEADZONE)))),
 				new Basis(players[1], new Vector2f(Basis.BASE_SIZE + Basis.BASE_SIDE_DEADZONE + (float)Math.random() * (GAME_COORD_SIZE.getX() - 2*(Basis.BASE_SIZE + Basis.BASE_SIDE_DEADZONE)),
 						Basis.BASE_SIZE + Basis.BASE_SIDE_DEADZONE + (float)Math.random() * (GAME_COORD_SIZE.getY() - 2*(Basis.BASE_SIZE + Basis.BASE_SIDE_DEADZONE))))
 		};
+
+		flags = new Flag[] {
+				new Flag(new Vector2f(Flag.FLAG_SIZE + Basis.BASE_SIDE_DEADZONE + (float)Math.random() * (GAME_COORD_SIZE.getX() - 2*(Flag.FLAG_SIZE + Basis.BASE_SIDE_DEADZONE)),
+						Flag.FLAG_SIZE + Basis.BASE_SIDE_DEADZONE + (float)Math.random() * (GAME_COORD_SIZE.getY() - 2*(Flag.FLAG_SIZE + Basis.BASE_SIDE_DEADZONE)))),
+				new Flag(new Vector2f(Flag.FLAG_SIZE + Basis.BASE_SIDE_DEADZONE + (float)Math.random() * (GAME_COORD_SIZE.getX() - 2*(Flag.FLAG_SIZE + Basis.BASE_SIDE_DEADZONE)),
+						Flag.FLAG_SIZE + Basis.BASE_SIDE_DEADZONE + (float)Math.random() * (GAME_COORD_SIZE.getY() - 2*(Flag.FLAG_SIZE + Basis.BASE_SIDE_DEADZONE)))),
+				new Flag(new Vector2f(Flag.FLAG_SIZE + Basis.BASE_SIDE_DEADZONE + (float)Math.random() * (GAME_COORD_SIZE.getX() - 2*(Flag.FLAG_SIZE + Basis.BASE_SIDE_DEADZONE)),
+						Flag.FLAG_SIZE + Basis.BASE_SIDE_DEADZONE + (float)Math.random() * (GAME_COORD_SIZE.getY() - 2*(Flag.FLAG_SIZE + Basis.BASE_SIDE_DEADZONE))))
+		};
+
 		commandMap = new CommandMap();
 	}
 
@@ -52,8 +62,10 @@ public class Game extends BasicGame
 		for (Basis base : basen) {
 			base.update(gc, passedTimeMS,commandMap);
 		}
-
-//		bazelle.update(passedTimeMS,commandMap);
+		
+		for (Flag flag : flags) {
+			flag.update(gc, passedTimeMS);
+		}
 	}
 
 	@Override
@@ -67,6 +79,10 @@ public class Game extends BasicGame
 
 		for (Basis base : basen) {
 			base.render(g);
+		}
+
+		for (Flag flag : flags) {
+			flag.render(g);
 		}
 	}
 

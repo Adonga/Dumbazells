@@ -99,4 +99,8 @@ public class Bazell {
 	public void render(Graphics g){
 		sprite.draw(position.x,position.y, SCALE);
 	}
+
+	public Vector2f getPosition() {
+		return position;
+	}
 }
