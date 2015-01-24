@@ -16,6 +16,7 @@ public class Bazell {
 	final float FRICTION = 0.99f;
 	final float ACCELERATION = 0.00004f;	// the added movementspeed that it gets by each bounce
 	final float NORMAL_SPEED = 0.01f;
+	final float MAX_SPEED = 0.15f;
 	final float FLAG_SPEED = NORMAL_SPEED * 0.1f;
 	
 	final float FLAG_GATHER_RADIUS = ACTION_RADIUS * 3.0f;
@@ -138,6 +139,8 @@ public class Bazell {
 	{
 		if(speed < NORMAL_SPEED)
 			speed = NORMAL_SPEED;
+		if(speed > MAX_SPEED)
+			speed = MAX_SPEED;
 		
 		// accellerate a bit
 		speed += ACCELERATION;
@@ -183,8 +186,6 @@ public class Bazell {
 					other.owningFlag.setCarriedBy(null);
 					other.owningFlag = null;
 				}
-				
-				System.out.println("kill!");
 				break;
 			}
 		}
