@@ -1,5 +1,6 @@
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -86,8 +87,20 @@ public class Game extends BasicGame
 				player.update(gc.getInput());
 			}
 
+			 // Create list of all bazells
+	        ArrayList<Bazell> allBazells = new ArrayList<Bazell>();
+	        for(int i=0; i<basen.length; ++i) {
+	        	allBazells.addAll(basen[i].getOwnBazells());
+	        }
+	        // sort by x coordinate.
+	        allBazells.sort((a, b) -> {
+	        	if(a.getPosition().x < b.getPosition().x) return -1;
+	        	if(a.getPosition().x > b.getPosition().x) return 1;
+	        	else return 0;
+	        });
+			
 			for (Basis base : basen) {
-				base.update(gc, commandMap, flags,basen);
+				base.update(gc, commandMap, flags, allBazells);
 				if(base.GetNumFlags() >= 3) {
 					gameState.playerHasWon(base);
 				}
