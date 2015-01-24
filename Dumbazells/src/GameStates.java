@@ -21,10 +21,13 @@ public class GameStates {
 	
 	private int registeredPlayers =0;
 	private int i =0;
+	
 	private Image start;
 	private Image bg;
 	private Image gameOver;
 	private Image won;
+	private Image winner;
+	
 	
 	public GameStates() {
 		
@@ -77,24 +80,29 @@ public class GameStates {
 		return registeredPlayers;
 	}
 	
-	public void restartAfterGameOverOrWon()
-	{
+
+	public void restart(){
 		for(int i =0; i<controllers.length; i++){
 			if(controllers[i].isButtonPressed(6)){
+				if(gameend){}
+				
 				gameend = false;
-				gamestart = true;
+				gamestart = false;
+				gameWon =false;
 				registering = true;
 			}
 		}
 	}
 	
-	public void restart(){
-		for(int i =0; i<controllers.length; i++){
-			if(controllers[i].isButtonPressed(6)){
-				gameend = false;
-				gamestart = false;
-				registering = true;
-			}
+	public void playerHasWon(Basis playersBase){
+		gameWon = true;
+		gameend = true;
+		try {
+			System.out.println(playersBase.baseType);
+			winner = new Image("images/Winner/"+playersBase.baseType+".png");
+		} catch (SlickException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	
@@ -115,19 +123,8 @@ public class GameStates {
 				g.fillRect(4+2*i, 7, 1, 1);
 			}
 		}
-		else if (gameWon)
+		else if (gameend && !gameWon)
 		{
-			if(i!=0){
-				try {
-					won = new Image("images/GameOver.png");
-					i=0;
-				} catch (SlickException e) {
-					e.printStackTrace();
-				}
-			}
-			won.draw(0, 0, 0.016f);
-		}
-		else if(gameend){
 			if(i!=0){
 				try {
 					gameOver = new Image("images/GameOver.png");
@@ -136,7 +133,20 @@ public class GameStates {
 					e.printStackTrace();
 				}
 			}
-			gameOver.draw( 0, 0, 0.016f);
+			gameOver.draw(0, 0, 0.016f);
+		}
+		else if(gameend && gameWon){
+			if(i!=0){
+				try {
+					won = new Image("images/Win.png");
+					i=0;
+				} catch (SlickException e) {
+					e.printStackTrace();
+				}
+			}
+			float SCALE = 0.025f;
+			won.draw( 0, 0, 0.016f);
+			winner.draw(8-winner.getWidth()*0.5f*SCALE,0,SCALE);
 		}	
 	}
 	
