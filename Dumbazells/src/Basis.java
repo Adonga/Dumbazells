@@ -18,6 +18,11 @@ public class Basis {
 
     BaseTypes baseType;
 
+    Image baseSquare;
+    Image baseTriang;
+    Image baseCircle;
+    Image baseRaute;
+
     private float changingSpawnRate = 0.0f;
 
     public Basis(Player owner, Vector2f position, BaseTypes baseType) {
@@ -25,6 +30,16 @@ public class Basis {
         this.ownBazells = new ArrayList<Bazell>();
         this.basePosition = position;
         this.baseType = baseType;
+
+        try {
+            baseSquare =  new Image("images/base_square.png");
+            baseTriang =  new Image("images/base_triangle.png");
+            baseCircle =  new Image("images/base_circle.png");
+            baseRaute =  new Image("images/base_raute.png");
+        } catch (SlickException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void spawnBazels() {
@@ -55,23 +70,26 @@ public class Basis {
     }
 
     public void render(Graphics graphics) {
-        try {
-            switch (baseType) {
-                case Square:
-                    Image baseSquare =  new Image("images/base_square.png");
-                    baseSquare.draw(getBasePosition().getX() - baseSquare.getWidth() * 0.5f * IMAGE_SCALE, getBasePosition().getY() - baseSquare.getHeight() * 0.5f * IMAGE_SCALE, IMAGE_SCALE);
-                    break;
-                case Triange:
-                    Image baseTriang =  new Image("images/base_triangle.png");
-                    baseTriang.draw(getBasePosition().getX() - baseTriang.getWidth() * 0.5f * IMAGE_SCALE, getBasePosition().getY() - baseTriang.getHeight() * 0.5f * IMAGE_SCALE, IMAGE_SCALE);
-                    break;
-                case Circle:
-                    Image baseCircle =  new Image("images/base_circle.png");
-                    baseCircle.draw(getBasePosition().getX() - baseCircle.getWidth() * 0.5f * IMAGE_SCALE, getBasePosition().getY() - baseCircle.getHeight() * 0.5f * IMAGE_SCALE, IMAGE_SCALE);
-                    break;
-            }
-        } catch (SlickException e) {
-            e.printStackTrace();
+        switch (baseType) {
+            case Square:
+                baseSquare.draw(getBasePosition().getX() - baseSquare.getWidth() * 0.5f * IMAGE_SCALE,
+                        getBasePosition().getY() - baseSquare.getHeight() * 0.5f * IMAGE_SCALE, IMAGE_SCALE);
+                break;
+
+            case Triangle:
+                baseTriang.draw(getBasePosition().getX() - baseTriang.getWidth() * 0.5f * IMAGE_SCALE,
+                        getBasePosition().getY() - baseTriang.getHeight() * 0.5f * IMAGE_SCALE, IMAGE_SCALE);
+                break;
+
+            case Circle:
+                baseCircle.draw(getBasePosition().getX() - baseCircle.getWidth() * 0.5f * IMAGE_SCALE,
+                        getBasePosition().getY() - baseCircle.getHeight() * 0.5f * IMAGE_SCALE, IMAGE_SCALE);
+                break;
+
+            case Raute:
+                baseRaute.draw(getBasePosition().getX() - baseRaute.getWidth() * 0.5f * IMAGE_SCALE,
+                        getBasePosition().getY() - baseRaute.getHeight() * 0.5f * IMAGE_SCALE, IMAGE_SCALE);
+                break;
         }
 
         for (Bazell bazell : ownBazells) {

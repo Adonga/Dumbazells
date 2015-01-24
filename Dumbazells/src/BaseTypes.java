@@ -1,7 +1,8 @@
 public enum BaseTypes {
     Square,
-    Triange,
+    Triangle,
     Circle,
+    Raute,
 
     size
 }

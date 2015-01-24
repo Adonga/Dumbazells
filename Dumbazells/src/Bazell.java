@@ -19,7 +19,10 @@ public class Bazell {
 	
 	final float FLAG_GATHER_RADIUS = SCALE * 3.0f;
 	final float FLAG_GO_RADIUS = FLAG_GATHER_RADIUS * 6.0f;
-	
+
+	final float STEPS_TO_AGGRO = 300;
+	private float passedSteps;
+
 	final float ATK = 0.1f;
 	final float FULL_HEALTH = 1f;
 	
@@ -42,6 +45,13 @@ public class Bazell {
 	private Image sprite;
 	
 	private Flag owningFlag = null;
+
+	private Image[] circleImages;
+	private Image[] rauteImages;
+	private Image[] squareImages;
+	private Image[] triangleImages;
+
+	final float IMAGE_SCALE = 0.003f;
 	
 	public Bazell(int PlayerIndex,Vector2f position)
 	{
@@ -50,15 +60,45 @@ public class Bazell {
 		this.direction = new Vector2f(-1,-1);
 		timerForAmok = TIMER;
 		health = FULL_HEALTH;
-		String ref = "images/Bazell.png";
+		commandArea = CommandType.NOTHING;
+
+
 		try {
-			sprite = new Image(ref);
-			
+			circleImages = new Image[] {
+					new Image("images/circle/happy.png"),
+					new Image("images/circle/smile.png"),
+					new Image("images/circle/normal.png"),
+					new Image("images/circle/sad.png"),
+					new Image("images/circle/angry.png")
+			};
+
+			rauteImages = new Image[] {
+					new Image("images/raute/happy.png"),
+					new Image("images/raute/smile.png"),
+					new Image("images/raute/normal.png"),
+					new Image("images/raute/sad.png"),
+					new Image("images/raute/angry.png")
+			};
+
+			squareImages = new Image[] {
+					new Image("images/square/happy.png"),
+					new Image("images/square/smile.png"),
+					new Image("images/square/normal.png"),
+					new Image("images/square/sad.png"),
+					new Image("images/square/angry.png")
+			};
+
+			triangleImages = new Image[] {
+					new Image("images/triangle/happy.png"),
+					new Image("images/triangle/smile.png"),
+					new Image("images/triangle/normal.png"),
+					new Image("images/triangle/sad.png"),
+					new Image("images/triangle/angry.png")
+			};
+
 		} catch (SlickException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		commandArea = CommandType.NOTHING;
 	}
 	
 	/*get und setters*/
@@ -78,9 +118,9 @@ public class Bazell {
 			position.x = 0.001f;
 			direction.x = -direction.x;
 		}
-		else if(position.x + sprite.getWidth()*SCALE*0.5f >= Game.GAME_COORD_SIZE.x)
+		else if(position.x + circleImages[0].getWidth() * IMAGE_SCALE * 0.5f >= Game.GAME_COORD_SIZE.x)
 		{
-			position.x =15.8f-sprite.getHeight()*SCALE*0.5f;
+			position.x = 15.8f - circleImages[0].getWidth() * IMAGE_SCALE  * 0.5f;
 			direction.x = -direction.x;
 		}
 		if(position.y <= 0 )
@@ -88,9 +128,9 @@ public class Bazell {
 			position.y = 0.001f;
 			direction.y = -direction.y;
 		}
-		else if(position.y + sprite.getHeight()*SCALE*0.5f >= Game.GAME_COORD_SIZE.y){
+		else if(position.y + circleImages[0].getWidth() * IMAGE_SCALE  * 0.5f >= Game.GAME_COORD_SIZE.y){
 			direction.y = -direction.y;
-			position.y = 8.999999f - sprite.getWidth()*SCALE*0.5f;
+			position.y = 8.999999f - circleImages[0].getWidth() * IMAGE_SCALE  * 0.5f;
 		}
 	}
 	
@@ -219,8 +259,68 @@ public class Bazell {
 	}
 	
 	
-	public void render(Graphics g){
-		sprite.draw(position.x - sprite.getWidth() * SCALE * 0.5f, position.y - sprite.getHeight() * SCALE * 0.5f ,SCALE );
+	public void render(Graphics g) {
+
+		float imageSizeScaled = circleImages[0].getWidth() * IMAGE_SCALE;
+
+		switch (playerIndex) {
+			case 0:
+
+				if (passedSteps > (STEPS_TO_AGGRO * 0.25f)) {
+					circleImages[1].draw(position.getX() - imageSizeScaled/2, position.getY() - imageSizeScaled/2, IMAGE_SCALE);
+				} else if (passedSteps > (STEPS_TO_AGGRO * 0.5f)) {
+					circleImages[2].draw(position.getX() - imageSizeScaled / 2, position.getY() - imageSizeScaled/2, IMAGE_SCALE);
+				} else if (passedSteps > (STEPS_TO_AGGRO * 0.75f)) {
+					circleImages[3].draw(position.getX() - imageSizeScaled/2, position.getY() - imageSizeScaled/2, IMAGE_SCALE);
+				} else if (passedSteps > STEPS_TO_AGGRO) {
+					circleImages[4].draw(position.getX() - imageSizeScaled / 2, position.getY() - imageSizeScaled / 2, IMAGE_SCALE);
+				} else {
+					circleImages[0].draw(position.getX() - imageSizeScaled/2, position.getY() - imageSizeScaled/2, IMAGE_SCALE);
+				}
+				break;
+
+			case 1:
+				if (passedSteps > (STEPS_TO_AGGRO * 0.25f)) {
+					rauteImages[1].draw(position.getX() - imageSizeScaled/2, position.getY() - imageSizeScaled/2, IMAGE_SCALE);
+				} else if (passedSteps > (STEPS_TO_AGGRO * 0.5f)) {
+					rauteImages[2].draw(position.getX() - imageSizeScaled / 2, position.getY() - imageSizeScaled/2, IMAGE_SCALE);
+				} else if (passedSteps > (STEPS_TO_AGGRO * 0.75f)) {
+					rauteImages[3].draw(position.getX() - imageSizeScaled/2, position.getY() - imageSizeScaled/2, IMAGE_SCALE);
+				} else if (passedSteps >= STEPS_TO_AGGRO) {
+					rauteImages[4].draw(position.getX() - imageSizeScaled/2, position.getY() - imageSizeScaled/2, IMAGE_SCALE);
+				} else {
+					rauteImages[0].draw(position.getX() - imageSizeScaled/2, position.getY() - imageSizeScaled/2, IMAGE_SCALE);
+				}
+				break;
+
+			case 2:
+				if (passedSteps > (STEPS_TO_AGGRO * 0.25f)) {
+					squareImages[1].draw(position.getX() - imageSizeScaled/2, position.getY() - imageSizeScaled/2, IMAGE_SCALE);
+				} else if (passedSteps > (STEPS_TO_AGGRO * 0.5f)) {
+					squareImages[2].draw(position.getX() - imageSizeScaled / 2, position.getY() - imageSizeScaled/2, IMAGE_SCALE);
+				} else if (passedSteps > (STEPS_TO_AGGRO * 0.75f)) {
+					squareImages[3].draw(position.getX() - imageSizeScaled/2, position.getY() - imageSizeScaled/2, IMAGE_SCALE);
+				} else if (passedSteps >= STEPS_TO_AGGRO) {
+					squareImages[4].draw(position.getX() - imageSizeScaled/2, position.getY() - imageSizeScaled/2, IMAGE_SCALE);
+				} else {
+					squareImages[0].draw(position.getX() - imageSizeScaled/2, position.getY() - imageSizeScaled/2, IMAGE_SCALE);
+				}
+				break;
+
+			case 3:
+				if (passedSteps > (STEPS_TO_AGGRO * 0.25f)) {
+					triangleImages[1].draw(position.getX() - imageSizeScaled/2, position.getY() - imageSizeScaled/2, IMAGE_SCALE);
+				} else if (passedSteps > (STEPS_TO_AGGRO * 0.5f)) {
+					triangleImages[2].draw(position.getX() - imageSizeScaled / 2, position.getY() - imageSizeScaled/2, IMAGE_SCALE);
+				} else if (passedSteps > (STEPS_TO_AGGRO * 0.75f)) {
+					triangleImages[3].draw(position.getX() - imageSizeScaled/2, position.getY() - imageSizeScaled/2, IMAGE_SCALE);
+				} else if (passedSteps >= STEPS_TO_AGGRO) {
+					triangleImages[4].draw(position.getX() - imageSizeScaled/2, position.getY() - imageSizeScaled/2, IMAGE_SCALE);
+				} else {
+					triangleImages[0].draw(position.getX() - imageSizeScaled/2, position.getY() - imageSizeScaled/2, IMAGE_SCALE);
+				}
+				break;
+		}
 	}
 
 

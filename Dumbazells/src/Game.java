@@ -33,13 +33,13 @@ public class Game extends BasicGame
 	@Override
 	public void init(GameContainer gc) throws SlickException {
 
-		players = new Player[] { new Player(0), new Player(1) };
+		players = new Player[] { new Player(2), new Player(1) };
 
 		basen = new Basis[] {
 				new Basis(players[0], new Vector2f(Basis.BASE_SIZE + Basis.BASE_SIDE_DEADZONE + (float)Math.random() * (GAME_COORD_SIZE.getX() - 2*(Basis.BASE_SIZE + Basis.BASE_SIDE_DEADZONE)),
-						Basis.BASE_SIZE + Basis.BASE_SIDE_DEADZONE + (float)Math.random() * (GAME_COORD_SIZE.getY() - 2*(Basis.BASE_SIZE + Basis.BASE_SIDE_DEADZONE))), BaseTypes.Circle),
+						Basis.BASE_SIZE + Basis.BASE_SIDE_DEADZONE + (float)Math.random() * (GAME_COORD_SIZE.getY() - 2*(Basis.BASE_SIZE + Basis.BASE_SIDE_DEADZONE))), BaseTypes.Square),
 				new Basis(players[1], new Vector2f(Basis.BASE_SIZE + Basis.BASE_SIDE_DEADZONE + (float)Math.random() * (GAME_COORD_SIZE.getX() - 2*(Basis.BASE_SIZE + Basis.BASE_SIDE_DEADZONE)),
-						Basis.BASE_SIZE + Basis.BASE_SIDE_DEADZONE + (float)Math.random() * (GAME_COORD_SIZE.getY() - 2*(Basis.BASE_SIZE + Basis.BASE_SIDE_DEADZONE))), BaseTypes.Square)
+						Basis.BASE_SIZE + Basis.BASE_SIDE_DEADZONE + (float)Math.random() * (GAME_COORD_SIZE.getY() - 2*(Basis.BASE_SIZE + Basis.BASE_SIDE_DEADZONE))), BaseTypes.Raute)
 		};
 
 		flags = new Flag[] {
