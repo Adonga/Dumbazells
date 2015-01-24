@@ -45,7 +45,7 @@ class MapRenderer {
         computeMipMaps(takeGroundParticles[0]);
         computeMipMaps(voidGroundParticles[0]);
 
-        shader = new Shader("shader/symbol.vert", "shader/symbol.frag");
+        shader = new Shader("shader/simple.vert", "shader/symbol.frag");
         shader.start();
         shader.setUniform("tex", 1);
         shader.setUniform("backgroundTex", 0);

@@ -20,6 +20,7 @@ public class CommandMap {
 	
 	private Image commandImage;
 	private Graphics commandImageG;
+	private Shader mapShader;
 	
 	private static final int FADE_INTERVAL = 40; 
 	private int drawsSinceLastFade = 0;
@@ -30,6 +31,11 @@ public class CommandMap {
 		commandImageG = commandImage.getGraphics();
 		commandImageG.setBackground(COMMANDCOLORS[CommandType.NOTHING.ordinal()]);
 		commandImageG.clear();
+
+		mapShader = new Shader("shader/simple.vert", "shader/map.frag");
+		mapShader.start();
+		mapShader.setUniform("tex", 0);
+		mapShader.end();
 	}
 	
 	// Needs to be called during a Game.Draw !!
@@ -51,9 +57,11 @@ public class CommandMap {
 		}*/
 		
 		commandImageG.flush();
+		mapShader.start();
 		g.drawImage(commandImage, 0,0, Game.GAME_COORD_SIZE.x, Game.GAME_COORD_SIZE.y, 0,0, RESOLUTION_X, RESOLUTION_Y);
+		mapShader.end();
 		
-		//commandImage.flushPixelData();
+		commandImage.flushPixelData();
 	}
 	
 	public CommandType getCommandAt(Vector2f gamePosition) {
