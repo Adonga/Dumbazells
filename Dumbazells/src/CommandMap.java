@@ -9,7 +9,7 @@ import org.newdawn.slick.geom.Circle;
 public class CommandMap {
 	static final int RESOLUTION_X = (int)(Game.GAME_COORD_SIZE.x * 50);
 	static final int RESOLUTION_Y = (int)(Game.GAME_COORD_SIZE.y * 50);
-	static final int GRADIENT_FILTER_RADIUS = 4;
+	static final int GRADIENT_FILTER_RADIUS = 8;
 	
 	static final private Color[] COMMANDCOLORS = {
 		Color.black, //NOTHING

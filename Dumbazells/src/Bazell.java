@@ -11,7 +11,7 @@ public class Bazell {
 	private int playerIndex;
 	
 	final float TIMER = 5; 				//Time until Bazell runs Amok 
-	final float SCALE = 0.01f; 			// scaling the image
+	final float SCALE = 0.02f; 			// scaling the image
 	final float ACCELERATION = 0.01f;	// the added movementspeed that it gets by each bounce
 	final float ATK = 0.1f;
 	final float FULL_HEALTH = 1f;
@@ -21,8 +21,9 @@ public class Bazell {
 	float amokTime = 3;
 
 	boolean idle; 			// What do I do now?
-	boolean inCommandArea; 	// is it on any command area
 	boolean carriesFlag;	// carries a flag y/n
+	
+	CommandType commandArea; 	// is on command area XY
 	
 	private Vector2f oldPosition; 	//
 	private Vector2f position; 		//
@@ -45,6 +46,16 @@ public class Bazell {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		commandArea = CommandType.NOTHING;
+	}
+	
+	/*get und setters*/
+	public int getPlayer(){
+		return playerIndex;
+	}
+	
+	public Vector2f getPosition() {
+		return position;
 	}
 	
 	//simple method bounces on map edges
@@ -57,9 +68,9 @@ public class Bazell {
 			direction.x = -direction.x;
 			running();
 		}
-		else if(position.x + sprite.getWidth()*SCALE >= 16)
+		else if(position.x + sprite.getWidth()*SCALE*0.5f >= 16)
 		{
-			position.x =15.8f-sprite.getHeight()*SCALE;
+			position.x =15.8f-sprite.getHeight()*SCALE*0.5f;
 			direction.x = -direction.x;
 			running();
 		}
@@ -69,27 +80,19 @@ public class Bazell {
 			direction.y = -direction.y;
 			running();
 		}
-		else if(position.y + sprite.getHeight()*SCALE >= 9){
+		else if(position.y + sprite.getHeight()*SCALE*0.5f >= 9){
 			direction.y = -direction.y;
-			position.y = 8.999999f-sprite.getWidth()*SCALE;
+			position.y = 8.999999f - sprite.getWidth()*SCALE*0.5f;
 			running();
 		}
-	}
-	
-	/*get und setters*/
-	public int getPlayer(){
-		return playerIndex;
-	}
-	
-	public Vector2f getPosition() {
-		return position;
 	}
 	
 	//makes the bazell run in runCommand and accelrerate until certain point
 	private void running()
 	{
-		if(speed<0.25f)
-			speed = (float) (1 - 1* Math.exp(-1.5 * speed));
+//		if(speed<0.1f)
+//			speed = (float) (1.1f - 1* Math.exp(-1.5 * speed));
+			speed = 0.01f;
 	}
 	
 	//makes that Bazell attacks
@@ -115,35 +118,38 @@ public class Bazell {
 	}
 	
 	public void update(int passedTimeMS, CommandMap commandMap){
-		
 		oldPosition = position;
-			
-		if(oldPosition.x > 0 && oldPosition.x+sprite.getWidth()*SCALE < 16 &&
-				oldPosition.y+sprite.getHeight()*SCALE < 9 && oldPosition.y>0 )
-		{
+		
+
 		direction.normalise();
 		position.x = position.x + direction.x * speed;
 		position.y = position.y + direction.y * speed;
-		}
-
 		bounceOnMap();
-		
-			
+				
 		CommandType currentCommand = commandMap.getCommandAt(position);
-		if(currentCommand == CommandType.NOTHING) {
+		if(currentCommand == commandArea && commandArea == CommandType.NOTHING) {
 			idle = true;
-			speed = 0.0f;
-		} else {
+			speed *= .8f;
+			commandArea = currentCommand; 
+		}else if((commandArea == CommandType.NOTHING && currentCommand!=CommandType.NOTHING)||
+				(commandArea != CommandType.NOTHING && currentCommand==CommandType.NOTHING))
+		{
+			position = oldPosition;
+			running();
 			reflectAtMap(commandMap);
+		} 
+		else{
+			running();
+			commandArea = currentCommand; 
 		}
 		
-	
-		if(idle) {timerForAmok--; speed = 0;}
-		else {timerForAmok = TIMER; speed = 0.1f;}
+//		idle ? timerForAmok-- : timerForAmok = TIMER ;
+//		if(idle) {timerForAmok--;}
+//		else {timerForAmok = TIMER;}
 		
-		if(timerForAmok ==0){
+//		if(timerForAmok ==0){
 //			runAmok(commandMap, otherBazell);
-			}
+//			}
 		if(health ==0 )
 			//die
 		oldPosition = position;
@@ -152,7 +158,7 @@ public class Bazell {
 	
 	
 	public void render(Graphics g){
-		sprite.draw(position.x,position.y, SCALE);
+		sprite.draw(position.x - sprite.getWidth() * SCALE * 0.5f, position.y - sprite.getHeight() * SCALE * 0.5f ,SCALE );
 	}
 
 
