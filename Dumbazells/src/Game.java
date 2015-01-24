@@ -69,10 +69,6 @@ public class Game extends BasicGame
 
 	public void render(GameContainer gc, Graphics g) throws SlickException 	{
 		commandMap.draw(g);
-		
-		for(Player player : players) {
-			player.render(commandMap, g);
-		}
 
 		for (Basis base : basen) {
 			base.render(g);
@@ -80,6 +76,10 @@ public class Game extends BasicGame
 
 		for (Flag flag : flags) {
 			flag.render(g);
+		}
+
+		for(Player player : players) {
+			player.render(commandMap, g);
 		}
 	}
 
