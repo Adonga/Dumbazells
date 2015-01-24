@@ -129,7 +129,14 @@ public class Bazell {
 		bounceOnMap();
 		
 			
-		if(inCommandArea)
+		CommandType currentCommand = commandMap.getCommandAt(position);
+		if(currentCommand == CommandType.NOTHING) {
+			idle = true;
+			speed = 0.0f;
+		} else {
+			reflectAtMap(commandMap);
+		}
+		
 	
 		if(idle) {timerForAmok--; speed = 0;}
 		else {timerForAmok = TIMER; speed = 0.1f;}
