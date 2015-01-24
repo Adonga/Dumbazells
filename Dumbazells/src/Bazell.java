@@ -13,8 +13,8 @@ public class Bazell {
 	final float TIMER = 5; 				//Time until Bazell runs Amok 
 	final float SCALE = 0.01f; 			// scaling the image
 	
-	final float FRICTION = 0.98f;
-	final float ACCELERATION = 0.00008f;	// the added movementspeed that it gets by each bounce
+	final float FRICTION = 0.99f;
+	final float ACCELERATION = 0.00004f;	// the added movementspeed that it gets by each bounce
 	final float NORMAL_SPEED = 0.01f;
 	final float FLAG_SPEED = NORMAL_SPEED * 0.1f;
 	
