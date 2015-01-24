@@ -23,7 +23,7 @@ public class CommandMap {
 	private Graphics commandImageG;
 	private Shader mapShader;
 	
-	private static final int FADE_INTERVAL = 1; 
+	private static final int FADE_INTERVAL = 5; 
 	private int drawsSinceLastFade = 0;
 	
 	public CommandMap() throws SlickException {

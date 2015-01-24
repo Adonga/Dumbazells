@@ -14,15 +14,15 @@ public class Bazell {
 	static final float ACTION_RADIUS = 0.35f; 
 	
 	static final float FRICTION = 0.99f;
-	static final float ACCELERATION = 0.00004f;	// the added movementspeed that it gets by each bounce
+	static final float ACCELERATION = 0.00003f;	// the added movementspeed that it gets by each bounce
 	static final float NORMAL_SPEED = 0.01f;
-	static final float MAX_SPEED = 0.15f;
-	static final float FLAG_SPEED = NORMAL_SPEED * 0.1f;
+	static final float MAX_SPEED = 0.1f;
+	static final float FLAG_SPEED = NORMAL_SPEED * 0.5f;
 	
 	static final float FLAG_GATHER_RADIUS = ACTION_RADIUS;
 	static final float FLAG_GO_RADIUS = FLAG_GATHER_RADIUS * 4.0f;
 
-	static final int STEPS_TO_AGGRO = 60 * 15;
+	static final int STEPS_TO_AGGRO = 60 * 20;
 	static final int AMOK_DURATION = 60 * 5;
 	private int passedAgroSteps;
 	private boolean amok = false;
@@ -33,7 +33,7 @@ public class Bazell {
 	
 	private Vector2f oldPosition; 	//
 	private Vector2f position; 		//
-	private Vector2f direction;		//
+	private Vector2f direction = new Vector2f();		//
 	private boolean bouncedLastFrame = false;
 	
 	private Image sprite;
@@ -55,7 +55,7 @@ public class Bazell {
 	{
 		playerIndex = PlayerIndex;
 		this.position = position;
-		this.direction = new Vector2f(-1,-1);
+		randomizeDirection();
 		
 		commandArea = CommandType.NOTHING;
 
