@@ -50,8 +50,10 @@ public class Game extends BasicGame
 		}
 
 		for (Basis base : basen) {
-			base.update(gc, passedTimeMS);
+			base.update(gc, passedTimeMS,commandMap);
 		}
+
+//		bazelle.update(passedTimeMS,commandMap);
 	}
 
 	@Override
