@@ -9,9 +9,9 @@ import org.newdawn.slick.geom.Circle;
 public class CommandMap {
 	static final int RESOLUTION_X = (int)(Game.GAME_COORD_SIZE.x * 50);
 	static final int RESOLUTION_Y = (int)(Game.GAME_COORD_SIZE.y * 50);
-	static final int GRADIENT_FILTER_RADIUS = 4;
+	static final int GRADIENT_FILTER_RADIUS = 8;
 	
-	static final private Color[] COMMANDCOLORS = {
+	static final private Color[] COMMANDCOLORS = { // please change also colorToCommandType if you change sth. here!
 		Color.black, //NOTHING
 		Color.blue, //RUN
 		Color.green, //CATCH
@@ -20,6 +20,9 @@ public class CommandMap {
 	
 	private Image commandImage;
 	private Graphics commandImageG;
+	
+	private static final int FADE_INTERVAL = 40; 
+	private int drawsSinceLastFade = 0;
 	
 	public CommandMap() throws SlickException {
 		commandImage = new Image(RESOLUTION_X, RESOLUTION_Y);
@@ -40,6 +43,13 @@ public class CommandMap {
 	}
 	
 	public void draw(Graphics g) {
+	/*	++drawsSinceLastFade;
+		if(drawsSinceLastFade > FADE_INTERVAL) { 
+			commandImageG.setColor(new Color(0.0f, 0.0f, 0.0f, 0.05f));
+			commandImageG.fillRect(0, 0, RESOLUTION_X, RESOLUTION_Y);
+			drawsSinceLastFade = 0;
+		}*/
+		
 		commandImageG.flush();
 		g.drawImage(commandImage, 0,0, Game.GAME_COORD_SIZE.x, Game.GAME_COORD_SIZE.y, 0,0, RESOLUTION_X, RESOLUTION_Y);
 		
@@ -49,15 +59,19 @@ public class CommandMap {
 	public CommandType getCommandAt(Vector2f gamePosition) {
 		Color c = commandImage.getColor((int)(gameCoordToCommandCoordX(gamePosition.x)), 
 										(int)(gameCoordToCommandCoordY(gamePosition.y)));
-		
-		if(c == COMMANDCOLORS[CommandType.NOTHING.ordinal()])
-			return CommandType.NOTHING;
-		else if(c == COMMANDCOLORS[CommandType.RUN.ordinal()])
+		return colorToCommandType(c);
+	}
+	
+	private CommandType colorToCommandType(Color color) {
+		if(color.b > 0.01f) {
 			return CommandType.RUN;
-		else if(c == COMMANDCOLORS[CommandType.ATTACK.ordinal()])
-			return CommandType.ATTACK;
-		else
+		} else if(color.g > 0.01f) {
 			return CommandType.CATCH;
+		} else if(color.r > 0.01f) {
+			return CommandType.ATTACK;
+		} else {
+			return CommandType.NOTHING;
+		}
 	}
 	
 	private float gameCoordToCommandCoordX(float x) {
@@ -87,8 +101,9 @@ public class CommandMap {
 			int r = (int)Math.cos(y * 1.570796327f / GRADIENT_FILTER_RADIUS);
 			for(int x = -r; x <= r; ++x) {
 				Vector2f pdir = new Vector2f(x,y);
-				pdir.normalise();
-				if(!onMap(x+cx,y+cy) || commandImage.getColor(x+cx, y+cy) == COMMANDCOLORS[CommandType.NOTHING.ordinal()])
+				if(pdir.lengthSquared() == 0.0f) continue;
+				pdir.scale(1.0f / pdir.lengthSquared());
+				if(!onMap(x+cx,y+cy) || colorToCommandType(commandImage.getColor(x+cx, y+cy)) == CommandType.NOTHING)
 					direction.sub(pdir);
 				else direction.add(pdir);
 			}

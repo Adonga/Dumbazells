@@ -1,4 +1,5 @@
 import java.awt.HeadlessException;
+import java.util.ArrayList;
 
 import org.newdawn.slick.geom.Vector2f;
 import org.newdawn.slick.Graphics;
@@ -12,23 +13,36 @@ public class Bazell {
 	
 	final float TIMER = 5; 				//Time until Bazell runs Amok 
 	final float SCALE = 0.01f; 			// scaling the image
-	final float ACCELERATION = 0.01f;	// the added movementspeed that it gets by each bounce
-	final float ATK = 0.1f;
-	final float FULL_HEALTH = 1f;
-	float health;
-	float speed = 0.01f; 				// initial speed when in command area for moveing
+	
+	final float FRICTION = 0.99f;
+	final float ACCELERATION = 0.00004f;	// the added movementspeed that it gets by each bounce
+	final float NORMAL_SPEED = 0.01f;
+	final float FLAG_SPEED = NORMAL_SPEED * 0.1f;
+	
+	final float FLAG_GATHER_RADIUS = SCALE * 3.0f;
+	final float FLAG_GO_RADIUS = FLAG_GATHER_RADIUS * 6.0f;
+	
+	float speed = 0.0f; 				// initial speed when in command area for moveing
 	float timerForAmok; 				//timer for the Amok
 	float amokTime = 3;
 
 	boolean idle; 			// What do I do now?
-	boolean inCommandArea; 	// is it on any command area
 	boolean carriesFlag;	// carries a flag y/n
+	
+	private CommandType commandArea; 	// is on command area XY
 	
 	private Vector2f oldPosition; 	//
 	private Vector2f position; 		//
 	private Vector2f direction;		//
+	private boolean bouncedLastFrame = false;
 	
-	Image sprite;
+	private Image sprite;
+	
+	private Flag owningFlag = null;
+	
+	private boolean deleted = false;
+	
+	public boolean NeedsDelete() { return deleted; }
 	
 	public Bazell(int PlayerIndex,Vector2f position)
 	{
@@ -36,7 +50,6 @@ public class Bazell {
 		this.position = position;
 		this.direction = new Vector2f(-1,-1);
 		timerForAmok = TIMER;
-		health = FULL_HEALTH;
 		String ref = "images/Bazell.png";
 		try {
 			sprite = new Image(ref);
@@ -45,35 +58,7 @@ public class Bazell {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
-	
-	//simple method bounces on map edges
-	private void bounceOnMap()
-	{
-		
-		if(position.x <= 0)
-		{
-			position.x = 0.001f;
-			direction.x = -direction.x;
-			running();
-		}
-		else if(position.x + sprite.getWidth()*SCALE >= 16)
-		{
-			position.x =15.8f-sprite.getHeight()*SCALE;
-			direction.x = -direction.x;
-			running();
-		}
-		if(position.y <= 0 )
-		{
-			position.y = 0.001f;
-			direction.y = -direction.y;
-			running();
-		}
-		else if(position.y + sprite.getHeight()*SCALE >= 9){
-			direction.y = -direction.y;
-			position.y = 8.999999f-sprite.getWidth()*SCALE;
-			running();
-		}
+		commandArea = CommandType.NOTHING;
 	}
 	
 	/*get und setters*/
@@ -85,26 +70,111 @@ public class Bazell {
 		return position;
 	}
 	
+	//simple method bounces on map edges
+	private void bounceOnMap()
+	{
+		if(position.x <= 0)
+		{
+			position.x = 0.001f;
+			direction.x = -direction.x;
+		}
+		else if(position.x + sprite.getWidth()*SCALE*0.5f >= Game.GAME_COORD_SIZE.x)
+		{
+			position.x =15.8f-sprite.getHeight()*SCALE*0.5f;
+			direction.x = -direction.x;
+		}
+		if(position.y <= 0 )
+		{
+			position.y = 0.001f;
+			direction.y = -direction.y;
+		}
+		else if(position.y + sprite.getHeight()*SCALE*0.5f >= Game.GAME_COORD_SIZE.y){
+			direction.y = -direction.y;
+			position.y = 8.999999f - sprite.getWidth()*SCALE*0.5f;
+		}
+	}
+	
 	//makes the bazell run in runCommand and accelrerate until certain point
 	private void running()
 	{
-		if(speed<0.25f)
-			speed = (float) (1 - 1* Math.exp(-1.5 * speed));
+		if(speed < NORMAL_SPEED)
+			speed = NORMAL_SPEED;
+		
+		// accellerate a bit
+		speed += ACCELERATION;
 	}
 	
 	//makes that Bazell attacks
-	private void attacking(Bazell otherBazell)
-	{
-		if(playerIndex != otherBazell.getPlayer()){
-			otherBazell.health--;
+	private void attacking(ArrayList<Bazell> otherBazell) {
+		if(speed < NORMAL_SPEED)
+			speed = NORMAL_SPEED;
+		
+		// binary search enemy bazells - search first index which is smaller than position.x-SCALE
+		float smallerThanX = position.x-SCALE;
+		int min = 0;
+		int max = otherBazell.size();
+		while(max - min >= 1) {
+			int mid = (max + min) / 2;
+			
+			Bazell other = otherBazell.get(mid); 		
+			if(other.getPosition().x+SCALE < smallerThanX) {
+				min = mid + 1;
+			} else {
+				max = mid;
+			}
 		}
-		position = position.sub(otherBazell.getPosition().normalise());
+		
+		for(int i=min; i<otherBazell.size(); ++i) {
+			Bazell other = otherBazell.get(i); 
+			if(other.getPosition().x - SCALE > position.x + SCALE) // won't find anything anymore
+				break;
+			
+			// kill?
+			if(other.getPosition().distanceSquared(position) < SCALE * SCALE) {
+				deleted = true;
+				if(owningFlag != null) {
+					owningFlag.setCarriedBy(null);
+					owningFlag = null;
+				}
+				
+				other.deleted = true;
+				if(other.owningFlag != null) {
+					other.owningFlag.setCarriedBy(null);
+					other.owningFlag = null;
+				}
+				
+				System.out.println("kill!");
+				break;
+			}
+		}
 	}
 
-	private void carries()
+	private void carries(Flag[] flags)
 	{
-		// go to flag 
-		// if flag is not on sb else take it and go to base?
+		if(speed < FLAG_SPEED)
+			speed = FLAG_SPEED;
+		
+		if(owningFlag == null) {
+			float minDistSq = 10000.0f;
+			Flag bestFlag = null;
+			for(Flag flag : flags) {
+				float newDistSq = flag.getPosition().distanceSquared(position);
+				if(newDistSq < minDistSq) {
+					minDistSq = newDistSq;
+					bestFlag = flag;
+				}
+			}
+			
+			float dist = (float)Math.sqrt(minDistSq);
+			if(dist < FLAG_GATHER_RADIUS) {
+				bestFlag.setCarriedBy(this);
+				owningFlag = bestFlag;
+			} else if(dist < FLAG_GO_RADIUS) {
+				direction = new Vector2f(bestFlag.getPosition());
+				direction.sub(position);
+				direction.normalise();
+			}
+		}
 	}
 	
 	//killing other Bazells and erases the command
@@ -114,44 +184,101 @@ public class Bazell {
 			//die
 	}
 	
-	public void update(int passedTimeMS, CommandMap commandMap){
+	public void update(CommandMap commandMap, Flag[] flags, Basis ownBasis, ArrayList<Bazell> enemyBazells){
+		if(deleted) return;
 		
-		oldPosition = position;
-			
-		if(oldPosition.x > 0 && oldPosition.x+sprite.getWidth()*SCALE < 16 &&
-				oldPosition.y+sprite.getHeight()*SCALE < 9 && oldPosition.y>0 )
-		{
+		oldPosition = new Vector2f(position);
+
 		direction.normalise();
 		position.x = position.x + direction.x * speed;
 		position.y = position.y + direction.y * speed;
-		}
-
 		bounceOnMap();
+				
+		CommandType nextCommand = commandMap.getCommandAt(position);
 		
-			
-		if(inCommandArea)
-	
-		if(idle) {timerForAmok--; speed = 0;}
-		else {timerForAmok = TIMER; speed = 0.1f;}
-		
-		if(timerForAmok ==0){
-//			runAmok(commandMap, otherBazell);
+		// staying the same
+		if(nextCommand == commandArea) {
+			// staying nothing
+			if(commandArea == CommandType.NOTHING) {
+				idle = true;
 			}
-		if(health ==0 )
-			//die
-		oldPosition = position;
+			// staying the same but not nothing
+			else if(commandArea == CommandType.CATCH) { 
+				carries(flags);
+			} 
+			else if(commandArea == CommandType.RUN) { 
+				this.running();
+			} 
+			else if(commandArea == CommandType.ATTACK) {
+				this.attacking(enemyBazells);
+			}
+			
+			bouncedLastFrame = false;
+		}
+		// changed
+		else {
+			// from something to nothing -> reflect!
+			if(nextCommand == CommandType.NOTHING) {
+				position = new Vector2f(oldPosition); // reset
+				
+				if(bouncedLastFrame) { // give up - random dir
+					double randomAngle = (float)(Math.random() * Math.PI * 2.0);
+					direction.x = (float)Math.sin(randomAngle);
+					direction.y = (float)Math.cos(randomAngle);
+				} else {
+					
+					reflectAtMap(commandMap);
+					bouncedLastFrame = true;
+				}
+			}
+			// was nothing, now something
+			else {
+				commandArea = nextCommand;
+				bouncedLastFrame = false;
+			}
+		}
 		
+		
+		// important - map may have changed!
+		commandArea = commandMap.getCommandAt(position);
+		
+		// always apply friction
+		if(commandArea != CommandType.RUN)
+			speed *= FRICTION;
+		
+//		idle ? timerForAmok-- : timerForAmok = TIMER ;
+//		if(idle) {timerForAmok--;}
+//		else {timerForAmok = TIMER;}
+		
+//		if(timerForAmok ==0){
+//			runAmok(commandMap, otherBazell);
+//			}
+
+		// lose flag at own base
+		if(owningFlag != null && ownBasis.getPosition().distance(position) < Basis.BASE_SIZE) {
+			owningFlag.setCarriedBy(null);
+			owningFlag = null;
+		}
 	}
 	
 	
 	public void render(Graphics g){
-		sprite.draw(position.x,position.y, SCALE);
+		sprite.draw(position.x - sprite.getWidth() * SCALE * 0.5f, position.y - sprite.getHeight() * SCALE * 0.5f ,SCALE );
 	}
 
 
 	// Reflects the internal direction at the map gradient
 	private void reflectAtMap(CommandMap commandMap) {
 		Vector2f gradient = commandMap.getBoundaryGradient(position);
-		direction = direction.sub(gradient.scale(2 * gradient.dot(direction)));
+		Vector2f oldDirection = new Vector2f(direction);
+		direction.sub(gradient.scale(2.0f * gradient.dot(direction)));
+		
+		//System.out.println("bounce");
+		
+		if(direction.lengthSquared() < 0.1) {
+			direction = oldDirection;
+			direction.scale(-1.0f);
+			System.out.println("blub!!");
+		}
 	}
 }

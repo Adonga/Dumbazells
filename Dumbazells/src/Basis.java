@@ -1,6 +1,4 @@
-import org.newdawn.slick.Color;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Graphics;
+import org.newdawn.slick.*;
 import org.newdawn.slick.geom.Vector2f;
 
 import java.util.ArrayList;
@@ -8,54 +6,104 @@ import java.util.ArrayList;
 public class Basis {
 
     public static final int MAX_NUMBER_BAZELLS = 15;
-    public static final float BASE_SIZE = 0.9f;
-    public static final float BASE_SIDE_DEADZONE = 0.2f;
+    public static final float BASE_SIZE = 0.6f;
+    public static final float BASE_SIDE_DEADZONE = 0.3f;
+    public static final int MAX_BAZELLS_IN_BASE = 5;
+
+    public static final float IMAGE_SCALE = 0.005f;
 
     private Player ownedBy;
     private ArrayList<Bazell> ownBazells;
     private Vector2f basePosition;
 
+    BaseTypes baseType;
+
     private float changingSpawnRate = 0.0f;
 
-    public Basis(Player owner, Vector2f position) {
+    public Basis(Player owner, Vector2f position, BaseTypes baseType) {
         this.ownedBy = owner;
         this.ownBazells = new ArrayList<Bazell>();
         this.basePosition = position;
+        this.baseType = baseType;
     }
 
-    // TODO: stop spawning if x Bazells in Base
     private void spawnBazels() {
 
+        float angle = (float)(Math.random() * (2*Math.PI));
+        float radius = (float)(Math.sqrt(Math.random()) * BASE_SIZE);
+
+        Vector2f spawnPos = new Vector2f((float)(this.basePosition.getX() + radius * Math.cos(angle)),
+                (float)(this.basePosition.getY() + radius * Math.sin(angle)));
+        
         if (ownBazells.size() < MAX_NUMBER_BAZELLS) {
-            Bazell spawnedBazell = new Bazell(ownedBy.getControlerIndex(), new Vector2f(basePosition));
+            Bazell spawnedBazell = new Bazell(ownedBy.getControlerIndex(), new Vector2f(spawnPos));
             ownBazells.add(spawnedBazell);
         }
     }
 
-    public void update(GameContainer gc, int passedTimeMS, CommandMap commandMap) {
+    public void update(GameContainer gc, CommandMap commandMap, Flag[] flags, Basis[] allBases) {
 
         changingSpawnRate += 0.003;
         if (changingSpawnRate >= 0.5f) {
             changingSpawnRate = 0.0f;
             this.spawnBazels();
         }
+        
+        // Create list of enemy bazells
+        ArrayList<Bazell> enemyBazells = new ArrayList<Bazell>();
+        for(int i=0; i<allBases.length; ++i) {
+        	if(allBases[i] != this) {
+        		enemyBazells.addAll(allBases[i].getOwnBazells());
+        	}
+        }
+        
+        // sort by x coordinate.
+        enemyBazells.sort((a, b) -> {
+        	if(a.getPosition().x < b.getPosition().x) return -1;
+        	if(a.getPosition().x > b.getPosition().x) return 1;
+        	else return 0;
+        });
+        
 
-        for (Bazell bazell : ownBazells) {
-            bazell.update(passedTimeMS, commandMap);
+        for(int i=0; i<ownBazells.size(); ++i) {
+        	if(ownBazells.get(i).NeedsDelete()) {
+        		ownBazells.remove(i);
+        		--i;
+        		if(i+1 >= ownBazells.size()) {
+        			break;
+        		}
+        		continue;
+        	}
+        	ownBazells.get(i).update(commandMap, flags, this, enemyBazells);
         }
     }
 
     public void render(Graphics graphics) {
-
-        graphics.setColor(Color.orange);
-        graphics.fillOval(basePosition.x - BASE_SIZE/2, basePosition.y - BASE_SIZE/2, BASE_SIZE, BASE_SIZE);
+        try {
+            switch (baseType) {
+                case Square:
+                    Image baseSquare =  new Image("images/base_square.png");
+                    baseSquare.draw(getPosition().getX() - baseSquare.getWidth() * 0.5f * IMAGE_SCALE, getPosition().getY() - baseSquare.getHeight() * 0.5f * IMAGE_SCALE, IMAGE_SCALE);
+                    break;
+                case Triange:
+                    Image baseTriang =  new Image("images/base_triangle.png");
+                    baseTriang.draw(getPosition().getX() - baseTriang.getWidth() * 0.5f * IMAGE_SCALE, getPosition().getY() - baseTriang.getHeight() * 0.5f * IMAGE_SCALE, IMAGE_SCALE);
+                    break;
+                case Circle:
+                    Image baseCircle =  new Image("images/base_circle.png");
+                    baseCircle.draw(getPosition().getX() - baseCircle.getWidth() * 0.5f * IMAGE_SCALE, getPosition().getY() - baseCircle.getHeight() * 0.5f * IMAGE_SCALE, IMAGE_SCALE);
+                    break;
+            }
+        } catch (SlickException e) {
+            e.printStackTrace();
+        }
 
         for (Bazell bazell : ownBazells) {
             bazell.render(graphics);
         }
     }
 
-    public Vector2f getBasePosition() {
+    public Vector2f getPosition() {
         return basePosition;
     }
 
