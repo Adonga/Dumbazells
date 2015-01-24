@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 
+import org.newdawn.slick.geom.Circle;
 import org.newdawn.slick.geom.Vector2f;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -9,29 +10,25 @@ import org.newdawn.slick.SlickException;
 public class Bazell {
 	
 	private int playerIndex;
-	
-	final float TIMER = 5; 				//Time until Bazell runs Amok 
-	final float ACTION_RADIUS = 0.4f; 
-	
-	final float FRICTION = 0.99f;
-	final float ACCELERATION = 0.00004f;	// the added movementspeed that it gets by each bounce
-	final float NORMAL_SPEED = 0.01f;
-	final float MAX_SPEED = 0.15f;
-	final float FLAG_SPEED = NORMAL_SPEED * 0.1f;
-	
-	final float FLAG_GATHER_RADIUS = ACTION_RADIUS;
-	final float FLAG_GO_RADIUS = FLAG_GATHER_RADIUS * 4.0f;
 
-	final float STEPS_TO_AGGRO = 300;
-	private float passedSteps;
+	static final float ACTION_RADIUS = 0.35f; 
+	
+	static final float FRICTION = 0.99f;
+	static final float ACCELERATION = 0.00004f;	// the added movementspeed that it gets by each bounce
+	static final float NORMAL_SPEED = 0.01f;
+	static final float MAX_SPEED = 0.15f;
+	static final float FLAG_SPEED = NORMAL_SPEED * 0.1f;
+	
+	static final float FLAG_GATHER_RADIUS = ACTION_RADIUS;
+	static final float FLAG_GO_RADIUS = FLAG_GATHER_RADIUS * 4.0f;
+
+	static final int STEPS_TO_AGGRO = 60 * 15;
+	static final int AMOK_DURATION = 60 * 5;
+	private int passedAgroSteps;
+	private boolean amok = false;
 
 	float speed = 0.0f; 				// initial speed when in command area for moveing
-	float timerForAmok; 				//timer for the Amok
-	float amokTime = 3;
 
-	boolean idle; 			// What do I do now?
-	boolean carriesFlag;	// carries a flag y/n
-	
 	private CommandType commandArea; 	// is on command area XY
 	
 	private Vector2f oldPosition; 	//
@@ -59,42 +56,45 @@ public class Bazell {
 		playerIndex = PlayerIndex;
 		this.position = position;
 		this.direction = new Vector2f(-1,-1);
-		timerForAmok = TIMER;
-
+		
 		commandArea = CommandType.NOTHING;
 
 		try {
-			circleImages = new Image[] {
-					new Image("images/circle/happy.png"),
-					new Image("images/circle/smile.png"),
-					new Image("images/circle/normal.png"),
-					new Image("images/circle/sad.png"),
-					new Image("images/circle/angry.png")
-			};
+			if(circleImages == null)
+				circleImages = new Image[] {
+						new Image("images/circle/happy.png"),
+						new Image("images/circle/smile.png"),
+						new Image("images/circle/normal.png"),
+						new Image("images/circle/sad.png"),
+						new Image("images/circle/angry.png")
+				};
 
-			rauteImages = new Image[] {
-					new Image("images/raute/happy.png"),
-					new Image("images/raute/smile.png"),
-					new Image("images/raute/normal.png"),
-					new Image("images/raute/sad.png"),
-					new Image("images/raute/angry.png")
-			};
+			if(rauteImages == null)
+				rauteImages = new Image[] {
+						new Image("images/raute/happy.png"),
+						new Image("images/raute/smile.png"),
+						new Image("images/raute/normal.png"),
+						new Image("images/raute/sad.png"),
+						new Image("images/raute/angry.png")
+				};
 
-			squareImages = new Image[] {
-					new Image("images/square/happy.png"),
-					new Image("images/square/smile.png"),
-					new Image("images/square/normal.png"),
-					new Image("images/square/sad.png"),
-					new Image("images/square/angry.png")
-			};
+			if(squareImages == null)
+				squareImages = new Image[] {
+						new Image("images/square/happy.png"),
+						new Image("images/square/smile.png"),
+						new Image("images/square/normal.png"),
+						new Image("images/square/sad.png"),
+						new Image("images/square/angry.png")
+				};
 
-			triangleImages = new Image[] {
-					new Image("images/triangle/happy.png"),
-					new Image("images/triangle/smile.png"),
-					new Image("images/triangle/normal.png"),
-					new Image("images/triangle/sad.png"),
-					new Image("images/triangle/angry.png")
-			};
+			if(triangleImages == null)
+				triangleImages = new Image[] {
+						new Image("images/triangle/happy.png"),
+						new Image("images/triangle/smile.png"),
+						new Image("images/triangle/normal.png"),
+						new Image("images/triangle/sad.png"),
+						new Image("images/triangle/angry.png")
+				};
 
 		} catch (SlickException e) {
 			e.printStackTrace();
@@ -139,26 +139,24 @@ public class Bazell {
 	{
 		if(speed < NORMAL_SPEED)
 			speed = NORMAL_SPEED;
-		if(speed > MAX_SPEED)
-			speed = MAX_SPEED;
-		
+
 		// accellerate a bit
 		speed += ACCELERATION;
 	}
 	
 	//makes that Bazell attacks
-	private void attacking(ArrayList<Bazell> otherBazell) {
+	private void attacking(ArrayList<Bazell> allBazells) {
 		if(speed < NORMAL_SPEED)
 			speed = NORMAL_SPEED;
 		
 		// binary search enemy bazells - search first index which is smaller than position.x-ACTION_RADIUS
 		float smallerThanX = position.x- ACTION_RADIUS;
 		int min = 0;
-		int max = otherBazell.size();
+		int max = allBazells.size();
 		while(max - min >= 1) {
 			int mid = (max + min) / 2;
 			
-			Bazell other = otherBazell.get(mid); 		
+			Bazell other = allBazells.get(mid); 		
 			if(other.getPosition().x+ ACTION_RADIUS < smallerThanX) {
 				min = mid + 1;
 			} else {
@@ -166,28 +164,30 @@ public class Bazell {
 			}
 		}
 		
-		for(int i=min; i<otherBazell.size(); ++i) {
-			Bazell other = otherBazell.get(i);
-			if(other.deleted) continue;
+		for(int i=min; i<allBazells.size(); ++i) {
+			Bazell other = allBazells.get(i);
+			if(other.deleted || other.amok ||
+			  (!amok && other.playerIndex == playerIndex) || other == this) continue;
 			
 			if(other.getPosition().x - ACTION_RADIUS > position.x + ACTION_RADIUS) // won't find anything anymore
 				break;
 			
 			// kill?
 			if(other.getPosition().distanceSquared(position) < ACTION_RADIUS * ACTION_RADIUS) {
-				deleted = true;
-				if(owningFlag != null) {
-					owningFlag.setCarriedBy(null);
-					owningFlag = null;
-				}
-				
-				other.deleted = true;
-				if(other.owningFlag != null) {
-					other.owningFlag.setCarriedBy(null);
-					other.owningFlag = null;
-				}
+				die();
+				other.die();
 				break;
 			}
+		}
+	}
+	
+	private void die() {
+		if(amok) return; // cannot die!
+		
+		deleted = true;
+		if(owningFlag != null) {
+			owningFlag.setCarriedBy(null);
+			owningFlag = null;
 		}
 	}
 
@@ -222,13 +222,21 @@ public class Bazell {
 	}
 	
 	//killing other Bazells and erases the command
-	private void runAmok(CommandMap commandMap, Bazell otherBazelle){
-		amokTime -= 0.3f;
-		if(amokTime ==0){}
-			//die
+	private void runAmok(ArrayList<Bazell> allbazells){
+		if(speed < NORMAL_SPEED*2)
+			speed = NORMAL_SPEED*2;
+		
+		speed += ACCELERATION * 20;
+		++passedAgroSteps;
+		if(passedAgroSteps > AMOK_DURATION) {
+			amok = false;
+			die();
+		}
+		//commandMap.paint(new Circle(position.x, position.y, this.ACTION_RADIUS), CommandType.NOTHING);
+		attacking(allbazells);
 	}
 	
-	public void update(CommandMap commandMap, Flag[] flags, Basis ownBasis, ArrayList<Bazell> enemyBazells){
+	public void update(CommandMap commandMap, Flag[] flags, Basis ownBasis, ArrayList<Bazell> allbazells){
 		if(deleted) return;
 		
 		oldPosition = new Vector2f(position);
@@ -240,46 +248,67 @@ public class Bazell {
 				
 		CommandType nextCommand = commandMap.getCommandAt(position);
 		
-		// staying the same
-		if(nextCommand == commandArea) {
-			// staying nothing
-			if(commandArea == CommandType.NOTHING) {
-				idle = true;
-			}
-			// staying the same but not nothing
-			else if(commandArea == CommandType.CATCH) { 
-				carries(flags, ownBasis);
-			} 
-			else if(commandArea == CommandType.RUN) { 
-				this.running();
-			} 
-			else if(commandArea == CommandType.ATTACK) {
-				this.attacking(enemyBazells);
-			}
-			
-			bouncedLastFrame = false;
-		}
-		// changed
-		else {
-			// from something to nothing -> reflect!
-			if(nextCommand == CommandType.NOTHING) {
-				position = new Vector2f(oldPosition); // reset
-				
-				if(bouncedLastFrame) { // give up - random dir
-					double randomAngle = (float)(Math.random() * Math.PI * 2.0);
-					direction.x = (float)Math.sin(randomAngle);
-					direction.y = (float)Math.cos(randomAngle);
-				} else {
-					
-					reflectAtMap(commandMap);
-					bouncedLastFrame = true;
+		if(speed > MAX_SPEED)
+			speed = MAX_SPEED;
+		
+		if(!amok) {
+		
+			// staying the same
+			if(nextCommand == commandArea) {
+				// staying nothing
+				/*if(commandArea == CommandType.NOTHING) {
+					idle = true;
 				}
-			}
-			// was nothing, now something
-			else {
-				commandArea = nextCommand;
+				// staying the same but not nothing
+				else */if(commandArea == CommandType.CATCH) { 
+					carries(flags, ownBasis);
+				} 
+				else if(commandArea == CommandType.RUN) { 
+					this.running();
+				} 
+				else if(commandArea == CommandType.ATTACK) {
+					this.attacking(allbazells);
+				}
+				
 				bouncedLastFrame = false;
 			}
+			// changed
+			else {
+				// from something to nothing -> reflect!
+				if(nextCommand == CommandType.NOTHING) {
+					position = new Vector2f(oldPosition); // reset
+					
+					if(bouncedLastFrame) { // give up - random dir
+						randomizeDirection();
+					} else {
+						
+						reflectAtMap(commandMap);
+						bouncedLastFrame = true;
+					}
+				}
+				// was nothing, now something
+				else {
+					commandArea = nextCommand;
+					bouncedLastFrame = false;
+				}
+			}
+			
+			
+			if(commandArea == CommandType.NOTHING ) {
+				++passedAgroSteps;
+				if(passedAgroSteps > STEPS_TO_AGGRO) {
+					passedAgroSteps = 0;
+					amok = true;
+					randomizeDirection();
+				}
+			}
+			else {
+				--passedAgroSteps;
+				if(passedAgroSteps < 0)
+					passedAgroSteps = 0;
+			}
+		} else {
+			runAmok(allbazells);
 		}
 		
 		
@@ -290,14 +319,6 @@ public class Bazell {
 		if(commandArea != CommandType.RUN)
 			speed *= FRICTION;
 		
-//		idle ? timerForAmok-- : timerForAmok = TIMER ;
-//		if(idle) {timerForAmok--;}
-//		else {timerForAmok = TIMER;}
-		
-//		if(timerForAmok ==0){
-//			runAmok(commandMap, otherBazell);
-//			}
-
 		// lose flag at own base
 		if(owningFlag != null && ownBasis.getPosition().distance(position) < Basis.BASE_SIZE) {
 			owningFlag.setCarriedBy(null);
@@ -305,67 +326,42 @@ public class Bazell {
 		}
 	}
 	
+	private void randomizeDirection() {
+		double randomAngle = (float)(Math.random() * Math.PI * 2.0);
+		direction.x = (float)Math.sin(randomAngle);
+		direction.y = (float)Math.cos(randomAngle);
+	}
 	
 	public void render(Graphics g) {
 
 		float imageSizeScaled = circleImages[0].getWidth() * IMAGE_SCALE;
 
+		int imageIndex = -1;
+		if(amok) {
+			imageIndex = 4;
+		} else {
+			int aggro = passedAgroSteps;
+			do {
+				aggro -= STEPS_TO_AGGRO / 4;
+				++imageIndex;
+			} while(aggro > 0 && imageIndex < circleImages.length - 2);
+		}
+		
 		switch (playerIndex) {
 			case 0:
-
-				if (passedSteps > (STEPS_TO_AGGRO * 0.25f)) {
-					circleImages[1].draw(position.getX() - imageSizeScaled / 2, position.getY() - imageSizeScaled / 2, IMAGE_SCALE);
-				} else if (passedSteps > (STEPS_TO_AGGRO * 0.5f)) {
-					circleImages[2].draw(position.getX() - imageSizeScaled / 2, position.getY() - imageSizeScaled/2, IMAGE_SCALE);
-				} else if (passedSteps > (STEPS_TO_AGGRO * 0.75f)) {
-					circleImages[3].draw(position.getX() - imageSizeScaled/2, position.getY() - imageSizeScaled/2, IMAGE_SCALE);
-				} else if (passedSteps > STEPS_TO_AGGRO) {
-					circleImages[4].draw(position.getX() - imageSizeScaled / 2, position.getY() - imageSizeScaled / 2, IMAGE_SCALE);
-				} else {
-					circleImages[0].draw(position.getX() - imageSizeScaled / 2, position.getY() - imageSizeScaled / 2, IMAGE_SCALE);
-				}
+				circleImages[imageIndex].draw(position.getX() - imageSizeScaled / 2, position.getY() - imageSizeScaled / 2, IMAGE_SCALE);
 				break;
 
 			case 1:
-				if (passedSteps > (STEPS_TO_AGGRO * 0.25f)) {
-					rauteImages[1].draw(position.getX() - imageSizeScaled/2, position.getY() - imageSizeScaled/2, IMAGE_SCALE);
-				} else if (passedSteps > (STEPS_TO_AGGRO * 0.5f)) {
-					rauteImages[2].draw(position.getX() - imageSizeScaled / 2, position.getY() - imageSizeScaled/2, IMAGE_SCALE);
-				} else if (passedSteps > (STEPS_TO_AGGRO * 0.75f)) {
-					rauteImages[3].draw(position.getX() - imageSizeScaled/2, position.getY() - imageSizeScaled/2, IMAGE_SCALE);
-				} else if (passedSteps >= STEPS_TO_AGGRO) {
-					rauteImages[4].draw(position.getX() - imageSizeScaled/2, position.getY() - imageSizeScaled/2, IMAGE_SCALE);
-				} else {
-					rauteImages[0].draw(position.getX() - imageSizeScaled/2, position.getY() - imageSizeScaled/2, IMAGE_SCALE);
-				}
+				rauteImages[imageIndex].draw(position.getX() - imageSizeScaled/2, position.getY() - imageSizeScaled/2, IMAGE_SCALE);
 				break;
 
 			case 2:
-				if (passedSteps > (STEPS_TO_AGGRO * 0.25f)) {
-					squareImages[1].draw(position.getX() - imageSizeScaled/2, position.getY() - imageSizeScaled/2, IMAGE_SCALE);
-				} else if (passedSteps > (STEPS_TO_AGGRO * 0.5f)) {
-					squareImages[2].draw(position.getX() - imageSizeScaled / 2, position.getY() - imageSizeScaled/2, IMAGE_SCALE);
-				} else if (passedSteps > (STEPS_TO_AGGRO * 0.75f)) {
-					squareImages[3].draw(position.getX() - imageSizeScaled/2, position.getY() - imageSizeScaled/2, IMAGE_SCALE);
-				} else if (passedSteps >= STEPS_TO_AGGRO) {
-					squareImages[4].draw(position.getX() - imageSizeScaled/2, position.getY() - imageSizeScaled/2, IMAGE_SCALE);
-				} else {
-					squareImages[0].draw(position.getX() - imageSizeScaled/2, position.getY() - imageSizeScaled/2, IMAGE_SCALE);
-				}
+				squareImages[imageIndex].draw(position.getX() - imageSizeScaled/2, position.getY() - imageSizeScaled/2, IMAGE_SCALE);
 				break;
 
 			case 3:
-				if (passedSteps > (STEPS_TO_AGGRO * 0.25f)) {
-					triangleImages[1].draw(position.getX() - imageSizeScaled/2, position.getY() - imageSizeScaled/2, IMAGE_SCALE);
-				} else if (passedSteps > (STEPS_TO_AGGRO * 0.5f)) {
-					triangleImages[2].draw(position.getX() - imageSizeScaled / 2, position.getY() - imageSizeScaled/2, IMAGE_SCALE);
-				} else if (passedSteps > (STEPS_TO_AGGRO * 0.75f)) {
-					triangleImages[3].draw(position.getX() - imageSizeScaled/2, position.getY() - imageSizeScaled/2, IMAGE_SCALE);
-				} else if (passedSteps >= STEPS_TO_AGGRO) {
-					triangleImages[4].draw(position.getX() - imageSizeScaled/2, position.getY() - imageSizeScaled/2, IMAGE_SCALE);
-				} else {
-					triangleImages[0].draw(position.getX() - imageSizeScaled/2, position.getY() - imageSizeScaled/2, IMAGE_SCALE);
-				}
+				triangleImages[imageIndex].draw(position.getX() - imageSizeScaled/2, position.getY() - imageSizeScaled/2, IMAGE_SCALE);
 				break;
 		}
 	}

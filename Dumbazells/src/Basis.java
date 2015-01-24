@@ -60,28 +60,13 @@ public class Basis {
         }
     }
 
-    public void update(GameContainer gc, CommandMap commandMap, Flag[] flags, Basis[] allBases) {
+    public void update(GameContainer gc, CommandMap commandMap, Flag[] flags, ArrayList<Bazell> allBazells) {
 
         changingSpawnRate += 0.003;
         if (changingSpawnRate >= 0.5f) {
             changingSpawnRate = 0.0f;
             this.spawnBazels();
         }
-        
-        // Create list of enemy bazells
-        ArrayList<Bazell> enemyBazells = new ArrayList<Bazell>();
-        for(int i=0; i<allBases.length; ++i) {
-        	if(allBases[i] != this) {
-        		enemyBazells.addAll(allBases[i].getOwnBazells());
-        	}
-        }
-        
-        // sort by x coordinate.
-        enemyBazells.sort((a, b) -> {
-        	if(a.getPosition().x < b.getPosition().x) return -1;
-        	if(a.getPosition().x > b.getPosition().x) return 1;
-        	else return 0;
-        });
         
 
         for(int i=0; i<ownBazells.size(); ++i) {
@@ -93,7 +78,7 @@ public class Basis {
         		}
         		continue;
         	}
-        	ownBazells.get(i).update(commandMap, flags, this, enemyBazells);
+        	ownBazells.get(i).update(commandMap, flags, this, allBazells);
         }
         
         // count flags
