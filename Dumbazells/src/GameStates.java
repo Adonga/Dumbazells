@@ -74,7 +74,15 @@ public class GameStates {
 	
 	public void restart(Input input)
 	{
-		if(controllers[0].isButtonPressed(10)){
+		if(controllers[0].isButtonPressed(5)){
+			gameend = false;
+			gamestart = true;
+			registering = true;
+		}
+	}
+	
+	public void restart(){
+		if(controllers[0].isButtonPressed(6)){
 			gameend = false;
 			gamestart = false;
 			registering = true;
@@ -84,35 +92,31 @@ public class GameStates {
 	public void render(Graphics g){
 		if(registering)
 		{
-			try {
 			if(i ==0){
-				start = new Image("images/Start.png");
-				i++;
+				try {
+					start = new Image("images/Start.png");
+					i++;
+				} catch (SlickException e) {
+					e.printStackTrace();
+				}
 			}
-			} catch (SlickException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-//			g.drawString("Press Start" , 0, 0);
-			start.draw(0, 0, 0.016f);
+			start.draw(0, 0, 0.0158f);
 			for (int i =0; i < registeredPlayers; i++)
 			{
-//				g.drawLine( 1 + i, 5 , 1 + i, 7);
 				g.fillRect(4+2*i, 7, 1, 1);
 			}
 		}
 		else if(gameend){
+			if(i!=0){
 				try {
-					if(i!=0){
 					win = new Image("images/Win.png");
-					i=0;	
-					}
+					i=0;
 				} catch (SlickException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-			
 			}
+			win.draw( 0, 0, 0.016f);
 		}	
+	}
 	
 	}
