@@ -11,7 +11,7 @@ public class Bazell {
 	private int playerIndex;
 	
 	final float TIMER = 5; 				//Time until Bazell runs Amok 
-	final float ACTION_RADIUS = 0.5f; 
+	final float ACTION_RADIUS = 0.4f; 
 	
 	final float FRICTION = 0.99f;
 	final float ACCELERATION = 0.00004f;	// the added movementspeed that it gets by each bounce
@@ -164,7 +164,9 @@ public class Bazell {
 		}
 		
 		for(int i=min; i<otherBazell.size(); ++i) {
-			Bazell other = otherBazell.get(i); 
+			Bazell other = otherBazell.get(i);
+			if(other.deleted) continue;
+			
 			if(other.getPosition().x - ACTION_RADIUS > position.x + ACTION_RADIUS) // won't find anything anymore
 				break;
 			
