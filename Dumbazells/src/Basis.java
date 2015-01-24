@@ -6,7 +6,7 @@ import java.util.ArrayList;
 public class Basis {
 
     public static final int MAX_NUMBER_BAZELLS = 15;
-    public static final float BASE_SIZE = 0.6f;
+    public static final float BASE_SIZE = 0.5f;
     public static final float BASE_SIDE_DEADZONE = 0.3f;
     public static final int MAX_BAZELLS_IN_BASE = 5;
 
@@ -56,39 +56,64 @@ public class Basis {
         }
     }
 
-    public void update(GameContainer gc, CommandMap commandMap, Flag[] flags) {
+    public void update(GameContainer gc, CommandMap commandMap, Flag[] flags, Basis[] allBases) {
 
         changingSpawnRate += 0.003;
         if (changingSpawnRate >= 0.5f) {
             changingSpawnRate = 0.0f;
             this.spawnBazels();
         }
+        
+        // Create list of enemy bazells
+        ArrayList<Bazell> enemyBazells = new ArrayList<Bazell>();
+        for(int i=0; i<allBases.length; ++i) {
+        	if(allBases[i] != this) {
+        		enemyBazells.addAll(allBases[i].getOwnBazells());
+        	}
+        }
+        
+        // sort by x coordinate.
+        enemyBazells.sort((a, b) -> {
+        	if(a.getPosition().x < b.getPosition().x) return -1;
+        	if(a.getPosition().x > b.getPosition().x) return 1;
+        	else return 0;
+        });
+        
 
-        for (Bazell bazell : ownBazells) {
-            bazell.update(commandMap, flags);
+        for(int i=0; i<ownBazells.size(); ++i) {
+        	if(ownBazells.get(i).NeedsDelete()) {
+        		ownBazells.remove(i);
+        		--i;
+        		if(i+1 >= ownBazells.size()) {
+        			break;
+        		}
+        		continue;
+        	}
+        	ownBazells.get(i).update(commandMap, flags, this, enemyBazells);
         }
     }
 
     public void render(Graphics graphics) {
+
         switch (baseType) {
             case Square:
-                baseSquare.draw(getBasePosition().getX() - baseSquare.getWidth() * 0.5f * IMAGE_SCALE,
-                        getBasePosition().getY() - baseSquare.getHeight() * 0.5f * IMAGE_SCALE, IMAGE_SCALE);
+                baseSquare.draw(getPosition().getX() - baseSquare.getWidth() * 0.5f * IMAGE_SCALE,
+                        getPosition().getY() - baseSquare.getHeight() * 0.5f * IMAGE_SCALE, IMAGE_SCALE);
                 break;
 
             case Triangle:
-                baseTriang.draw(getBasePosition().getX() - baseTriang.getWidth() * 0.5f * IMAGE_SCALE,
-                        getBasePosition().getY() - baseTriang.getHeight() * 0.5f * IMAGE_SCALE, IMAGE_SCALE);
+                baseTriang.draw(getPosition().getX() - baseTriang.getWidth() * 0.5f * IMAGE_SCALE,
+                        getPosition().getY() - baseTriang.getHeight() * 0.5f * IMAGE_SCALE, IMAGE_SCALE);
                 break;
 
             case Circle:
-                baseCircle.draw(getBasePosition().getX() - baseCircle.getWidth() * 0.5f * IMAGE_SCALE,
-                        getBasePosition().getY() - baseCircle.getHeight() * 0.5f * IMAGE_SCALE, IMAGE_SCALE);
+                baseCircle.draw(getPosition().getX() - baseCircle.getWidth() * 0.5f * IMAGE_SCALE,
+                        getPosition().getY() - baseCircle.getHeight() * 0.5f * IMAGE_SCALE, IMAGE_SCALE);
                 break;
 
             case Raute:
-                baseRaute.draw(getBasePosition().getX() - baseRaute.getWidth() * 0.5f * IMAGE_SCALE,
-                        getBasePosition().getY() - baseRaute.getHeight() * 0.5f * IMAGE_SCALE, IMAGE_SCALE);
+                baseRaute.draw(getPosition().getX() - baseRaute.getWidth() * 0.5f * IMAGE_SCALE,
+                        getPosition().getY() - baseRaute.getHeight() * 0.5f * IMAGE_SCALE, IMAGE_SCALE);
                 break;
         }
 
@@ -97,7 +122,7 @@ public class Basis {
         }
     }
 
-    public Vector2f getBasePosition() {
+    public Vector2f getPosition() {
         return basePosition;
     }
 

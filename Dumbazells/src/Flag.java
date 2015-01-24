@@ -24,7 +24,7 @@ public class Flag {
     }
 
     public void render(Graphics graphics) {
-        graphics.setColor(Color.white);
+        graphics.setColor(Color.magenta);
         graphics.fillOval(position.x, position.y, FLAG_SIZE, FLAG_SIZE);
     }
 
@@ -51,7 +51,7 @@ public class Flag {
 
         for (Basis basis : basen) {
             Vector2f posCopy = new Vector2f(pos);
-            if (posCopy.sub(basis.getBasePosition()).length() < (Flag.FLAG_BASE_DEADZONE + Basis.BASE_SIZE/2)) {
+            if (posCopy.sub(basis.getPosition()).length() < (Flag.FLAG_BASE_DEADZONE + Basis.BASE_SIZE/2)) {
                 pos = new Vector2f(Flag.FLAG_SIZE + Basis.BASE_SIDE_DEADZONE + (float)Math.random() * (Game.GAME_COORD_SIZE.getX() - 2*(Flag.FLAG_SIZE + Basis.BASE_SIDE_DEADZONE)),
                         Flag.FLAG_SIZE + Basis.BASE_SIDE_DEADZONE + (float)Math.random() * (Game.GAME_COORD_SIZE.getY() - 2*(Flag.FLAG_SIZE + Basis.BASE_SIDE_DEADZONE)));
             }

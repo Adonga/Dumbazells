@@ -11,6 +11,7 @@ import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.ScalableGame;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Vector2f;
+import org.newdawn.slick.opengl.renderer.*;
 
 
 public class Game extends BasicGame
@@ -21,6 +22,7 @@ public class Game extends BasicGame
 	private static ScalableGame scalableGame;
 
 	private CommandMap commandMap;
+	private MapRenderer mapRenderer;
 
 	private Player[] players;
 	private Basis[] basen;
@@ -33,7 +35,7 @@ public class Game extends BasicGame
 	@Override
 	public void init(GameContainer gc) throws SlickException {
 
-		players = new Player[] { new Player(2), new Player(1) };
+		players = new Player[] { new Player(0), new Player(1) };
 
 		basen = new Basis[] {
 				new Basis(players[0], new Vector2f(Basis.BASE_SIZE + Basis.BASE_SIDE_DEADZONE + (float)Math.random() * (GAME_COORD_SIZE.getX() - 2*(Basis.BASE_SIZE + Basis.BASE_SIDE_DEADZONE)),
@@ -49,16 +51,20 @@ public class Game extends BasicGame
 		};
 
 		commandMap = new CommandMap();
+
+		mapRenderer = new MapRenderer();
 	}
 
 	@Override
 	public void update(GameContainer gc, int passedTimeMS) throws SlickException {
+		mapRenderer.updateLogic(commandMap);
+
 		for(Player player : players) {
 			player.update(gc.getInput());
 		}
 
 		for (Basis base : basen) {
-			base.update(gc, commandMap, flags);
+			base.update(gc, commandMap, flags, basen);
 		}
 
 		for (Flag flag : flags) {
@@ -70,6 +76,7 @@ public class Game extends BasicGame
 
 	public void render(GameContainer gc, Graphics g) throws SlickException 	{
 		commandMap.draw(g);
+		mapRenderer.drawOverlays(g);
 
 		for (Basis base : basen) {
 			base.render(g);
@@ -91,6 +98,9 @@ public class Game extends BasicGame
 		{
 			GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 			int height = gd.getDisplayMode().getHeight() - 100;
+
+			// Maybe this switch has no effect.
+			//Renderer.setRenderer(new VAOGLRenderer());
 			
 			// Enforce a width that is compatible to our fixed ratio
 			int width = (int)(height * (16.0f / 9.0f));
