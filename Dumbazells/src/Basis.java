@@ -1,4 +1,3 @@
-import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -32,9 +31,7 @@ public class Basis {
 
         Vector2f spawnPos = new Vector2f((float)(this.basePosition.getX() + radius * Math.cos(angle)),
                 (float)(this.basePosition.getY() + radius * Math.sin(angle)));
-
-        System.out.println(spawnPos);
-
+        
         if (ownBazells.size() < MAX_NUMBER_BAZELLS) {
             Bazell spawnedBazell = new Bazell(ownedBy.getControlerIndex(), new Vector2f(spawnPos));
             ownBazells.add(spawnedBazell);

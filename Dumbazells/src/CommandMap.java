@@ -101,7 +101,8 @@ public class CommandMap {
 			int r = (int)Math.cos(y * 1.570796327f / GRADIENT_FILTER_RADIUS);
 			for(int x = -r; x <= r; ++x) {
 				Vector2f pdir = new Vector2f(x,y);
-				pdir.normalise();
+				if(pdir.lengthSquared() == 0.0f) continue;
+				pdir.scale(1.0f / pdir.lengthSquared());
 				if(!onMap(x+cx,y+cy) || colorToCommandType(commandImage.getColor(x+cx, y+cy)) == CommandType.NOTHING)
 					direction.sub(pdir);
 				else direction.add(pdir);

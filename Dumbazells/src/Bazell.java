@@ -11,12 +11,19 @@ public class Bazell {
 	private int playerIndex;
 	
 	final float TIMER = 5; 				//Time until Bazell runs Amok 
-	final float SCALE = 0.02f; 			// scaling the image
-	final float ACCELERATION = 0.01f;	// the added movementspeed that it gets by each bounce
+	final float SCALE = 0.01f; 			// scaling the image
+	
+	final float FRICTION = 0.8f;
+	final float ACCELERATION = 1.001f;	// the added movementspeed that it gets by each bounce
+	final float START_SPEED = 0.01f;
+	
+	
 	final float ATK = 0.1f;
 	final float FULL_HEALTH = 1f;
+	
+	
 	float health;
-	float speed = 0.01f; 				// initial speed when in command area for moveing
+	float speed = 0.0f; 				// initial speed when in command area for moveing
 	float timerForAmok; 				//timer for the Amok
 	float amokTime = 3;
 
@@ -61,38 +68,32 @@ public class Bazell {
 	//simple method bounces on map edges
 	private void bounceOnMap()
 	{
-		
 		if(position.x <= 0)
 		{
 			position.x = 0.001f;
 			direction.x = -direction.x;
-			running();
 		}
-		else if(position.x + sprite.getWidth()*SCALE*0.5f >= 16)
+		else if(position.x + sprite.getWidth()*SCALE*0.5f >= Game.GAME_COORD_SIZE.x)
 		{
 			position.x =15.8f-sprite.getHeight()*SCALE*0.5f;
 			direction.x = -direction.x;
-			running();
 		}
 		if(position.y <= 0 )
 		{
 			position.y = 0.001f;
 			direction.y = -direction.y;
-			running();
 		}
-		else if(position.y + sprite.getHeight()*SCALE*0.5f >= 9){
+		else if(position.y + sprite.getHeight()*SCALE*0.5f >= Game.GAME_COORD_SIZE.y){
 			direction.y = -direction.y;
 			position.y = 8.999999f - sprite.getWidth()*SCALE*0.5f;
-			running();
 		}
 	}
 	
 	//makes the bazell run in runCommand and accelrerate until certain point
 	private void running()
 	{
-//		if(speed<0.1f)
-//			speed = (float) (1.1f - 1* Math.exp(-1.5 * speed));
-			speed = 0.01f;
+		// accellerate a bit
+		speed *= ACCELERATION;
 	}
 	
 	//makes that Bazell attacks
@@ -118,30 +119,44 @@ public class Bazell {
 	}
 	
 	public void update(int passedTimeMS, CommandMap commandMap){
-		oldPosition = position;
-		
+		oldPosition = new Vector2f(position);
 
 		direction.normalise();
 		position.x = position.x + direction.x * speed;
 		position.y = position.y + direction.y * speed;
 		bounceOnMap();
 				
-		CommandType currentCommand = commandMap.getCommandAt(position);
-		if(currentCommand == commandArea && commandArea == CommandType.NOTHING) {
-			idle = true;
-			speed *= .8f;
-			commandArea = currentCommand; 
-		}else if((commandArea == CommandType.NOTHING && currentCommand!=CommandType.NOTHING)||
-				(commandArea != CommandType.NOTHING && currentCommand==CommandType.NOTHING))
-		{
-			position = oldPosition;
-			running();
-			reflectAtMap(commandMap);
-		} 
-		else{
-			running();
-			commandArea = currentCommand; 
+		CommandType nextCommand = commandMap.getCommandAt(position);
+		
+		// staying the same
+		if(nextCommand == commandArea) {
+			// staying nothing
+			if(commandArea == CommandType.NOTHING) {
+				idle = true;
+				speed *= FRICTION;
+			}
+			// staying the same but not nothing
+			else {
+				running();
+			} 
 		}
+		// changed
+		else {
+			// from something to nothing -> reflect!
+			if(nextCommand == CommandType.NOTHING) {
+				position = oldPosition; // reset
+				reflectAtMap(commandMap);
+				
+				// important - map may be changed!
+				commandArea = commandMap.getCommandAt(position);
+			}
+			// was nothing, now something -> speed up
+			else {
+				speed = START_SPEED;
+				commandArea = nextCommand;
+			}
+		}
+		
 		
 //		idle ? timerForAmok-- : timerForAmok = TIMER ;
 //		if(idle) {timerForAmok--;}
@@ -150,10 +165,7 @@ public class Bazell {
 //		if(timerForAmok ==0){
 //			runAmok(commandMap, otherBazell);
 //			}
-		if(health ==0 )
-			//die
-		oldPosition = position;
-		
+
 	}
 	
 	
