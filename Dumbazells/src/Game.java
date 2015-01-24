@@ -47,12 +47,12 @@ public class Game extends BasicGame
 
 	@Override
 	public void update(GameContainer gc, int passedTimeMS) throws SlickException {
-		
-		
+	
 		mapRenderer.updateLogic(commandMap);
 		
 		if(gameState.registering){
 
+			commandMap.clear();
 			if(j %10 ==0)
 				playerRegisterd = gameState.init(gc.getInput());
 			j++;
@@ -65,7 +65,7 @@ public class Game extends BasicGame
 				players[i] = new Player(i);
 			}	
 			basen = new Basis[playerRegisterd];
-			BaseTypes[] baseTypes = {BaseTypes.Circle,BaseTypes.Triangle,BaseTypes.Square};
+			BaseTypes[] baseTypes = {BaseTypes.Circle,BaseTypes.Raute,BaseTypes.Square,BaseTypes.Triangle};
 			for (int i = 0; i < playerRegisterd; i++) {
 				basen[i] = new Basis( players[i], new Vector2f(
 								Basis.BASE_SIZE
@@ -88,14 +88,19 @@ public class Game extends BasicGame
 
 			for (Basis base : basen) {
 				base.update(gc, commandMap, flags,basen);
+				if(base.GetNumFlags() >= 3) {
+					// todo win.
+				}
 			}
 
 			for (Flag flag : flags) {
 				flag.update(gc, passedTimeMS);
 			}
+			gameState.restart();
+			
 		}
 		else {
-			gameState.restart(gc.getInput());
+			gameState.restartAfterGameOverOrWon();
 		}
 	}
 

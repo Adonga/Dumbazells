@@ -11,15 +11,16 @@ public class Bazell {
 	private int playerIndex;
 	
 	final float TIMER = 5; 				//Time until Bazell runs Amok 
-	final float ACTION_RADIUS = 0.5f; 			// scaling the image
+	final float ACTION_RADIUS = 0.4f; 
 	
 	final float FRICTION = 0.99f;
 	final float ACCELERATION = 0.00004f;	// the added movementspeed that it gets by each bounce
 	final float NORMAL_SPEED = 0.01f;
+	final float MAX_SPEED = 0.15f;
 	final float FLAG_SPEED = NORMAL_SPEED * 0.1f;
 	
-	final float FLAG_GATHER_RADIUS = ACTION_RADIUS * 3.0f;
-	final float FLAG_GO_RADIUS = FLAG_GATHER_RADIUS * 6.0f;
+	final float FLAG_GATHER_RADIUS = ACTION_RADIUS;
+	final float FLAG_GO_RADIUS = FLAG_GATHER_RADIUS * 4.0f;
 
 	final float STEPS_TO_AGGRO = 300;
 	private float passedSteps;
@@ -47,7 +48,7 @@ public class Bazell {
 	private Image[] squareImages;
 	private Image[] triangleImages;
 
-	final float IMAGE_SCALE = 0.003f;
+	final float IMAGE_SCALE = 0.01f; // 0.003f
 	
 	private boolean deleted = false;
 	
@@ -138,6 +139,8 @@ public class Bazell {
 	{
 		if(speed < NORMAL_SPEED)
 			speed = NORMAL_SPEED;
+		if(speed > MAX_SPEED)
+			speed = MAX_SPEED;
 		
 		// accellerate a bit
 		speed += ACCELERATION;
@@ -164,7 +167,9 @@ public class Bazell {
 		}
 		
 		for(int i=min; i<otherBazell.size(); ++i) {
-			Bazell other = otherBazell.get(i); 
+			Bazell other = otherBazell.get(i);
+			if(other.deleted) continue;
+			
 			if(other.getPosition().x - ACTION_RADIUS > position.x + ACTION_RADIUS) // won't find anything anymore
 				break;
 			
@@ -181,8 +186,6 @@ public class Bazell {
 					other.owningFlag.setCarriedBy(null);
 					other.owningFlag = null;
 				}
-				
-				System.out.println("kill!");
 				break;
 			}
 		}
@@ -196,7 +199,7 @@ public class Bazell {
 			float minDistSq = 10000.0f;
 			Flag bestFlag = null;
 			for(Flag flag : flags) {
-				if(flag.getCarriedBy() != null) continue; // ignore carried flags
+				if (flag.getCarriedBy() != null) continue; // ignore carried flags
 				if (flag.getPosition().distance(ownBase.getPosition()) < Basis.BASE_SIZE) continue;
 				
 				float newDistSq = flag.getPosition().distanceSquared(position);
@@ -311,7 +314,7 @@ public class Bazell {
 			case 0:
 
 				if (passedSteps > (STEPS_TO_AGGRO * 0.25f)) {
-					circleImages[1].draw(position.getX() - imageSizeScaled/2, position.getY() - imageSizeScaled/2, IMAGE_SCALE);
+					circleImages[1].draw(position.getX() - imageSizeScaled / 2, position.getY() - imageSizeScaled / 2, IMAGE_SCALE);
 				} else if (passedSteps > (STEPS_TO_AGGRO * 0.5f)) {
 					circleImages[2].draw(position.getX() - imageSizeScaled / 2, position.getY() - imageSizeScaled/2, IMAGE_SCALE);
 				} else if (passedSteps > (STEPS_TO_AGGRO * 0.75f)) {
@@ -319,7 +322,7 @@ public class Bazell {
 				} else if (passedSteps > STEPS_TO_AGGRO) {
 					circleImages[4].draw(position.getX() - imageSizeScaled / 2, position.getY() - imageSizeScaled / 2, IMAGE_SCALE);
 				} else {
-					circleImages[0].draw(position.getX() - imageSizeScaled/2, position.getY() - imageSizeScaled/2, IMAGE_SCALE);
+					circleImages[0].draw(position.getX() - imageSizeScaled / 2, position.getY() - imageSizeScaled / 2, IMAGE_SCALE);
 				}
 				break;
 

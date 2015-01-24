@@ -14,6 +14,7 @@ public class GameStates {
 	public boolean registering = true;
 	public boolean gamestart;
 	public boolean gameend;
+	public boolean gameWon;
 	
 	private Controller[] controllers;
 	private boolean[] registerdController;
@@ -22,7 +23,8 @@ public class GameStates {
 	private int i =0;
 	private Image start;
 	private Image bg;
-	private Image win;
+	private Image gameOver;
+	private Image won;
 	
 	public GameStates() {
 		
@@ -61,55 +63,81 @@ public class GameStates {
 				}
 			if(controllers.length>0)
 			{
-				if(controllers[0].isButtonPressed(7) && registeredPlayers>0){
-					registering = false;
+				for(int i =0; i<controllers.length; i++){
+					if(controllers[i].isButtonPressed(7) && registeredPlayers>0){
+						registering = false;
 					}
+				}
 			}
-			if(input.isKeyDown(Input.KEY_0)){registering = false; registeredPlayers++;}
+			
+			if(input.isKeyDown(Input.KEY_0)) {
+				registering = false;
+				return ++registeredPlayers;
+			}
 		return registeredPlayers;
 	}
 	
-	public void restart(Input input)
+	public void restartAfterGameOverOrWon()
 	{
-		if(controllers[0].isButtonPressed(10)){
-			gameend = false;
-			gamestart = false;
-			registering = true;
+		for(int i =0; i<controllers.length; i++){
+			if(controllers[i].isButtonPressed(6)){
+				gameend = false;
+				gamestart = true;
+				registering = true;
+			}
+		}
+	}
+	
+	public void restart(){
+		for(int i =0; i<controllers.length; i++){
+			if(controllers[i].isButtonPressed(6)){
+				gameend = false;
+				gamestart = false;
+				registering = true;
+			}
 		}
 	}
 	
 	public void render(Graphics g){
 		if(registering)
 		{
-			try {
 			if(i ==0){
-				start = new Image("images/Start.png");
-				i++;
+				try {
+					start = new Image("images/Start.png");
+					i++;
+				} catch (SlickException e) {
+					e.printStackTrace();
+				}
 			}
-			} catch (SlickException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-//			g.drawString("Press Start" , 0, 0);
-			start.draw(0, 0, 0.016f);
+			start.draw(0, 0, 0.0158f);
 			for (int i =0; i < registeredPlayers; i++)
 			{
-//				g.drawLine( 1 + i, 5 , 1 + i, 7);
 				g.fillRect(4+2*i, 7, 1, 1);
 			}
 		}
-		else if(gameend){
+		else if (gameWon)
+		{
+			if(i!=0){
 				try {
-					if(i!=0){
-					win = new Image("images/Win.png");
-					i=0;	
-					}
+					won = new Image("images/GameOver.png");
+					i=0;
 				} catch (SlickException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-			
 			}
+			won.draw(0, 0, 0.016f);
+		}
+		else if(gameend){
+			if(i!=0){
+				try {
+					gameOver = new Image("images/GameOver.png");
+					i=0;
+				} catch (SlickException e) {
+					e.printStackTrace();
+				}
+			}
+			gameOver.draw( 0, 0, 0.016f);
 		}	
+	}
 	
 	}

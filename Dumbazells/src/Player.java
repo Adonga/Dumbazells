@@ -65,13 +65,13 @@ public class Player {
 		
 	
 		if(controller != null && controller.getAxisCount() >= 2) {
-			if(controller.isButtonPressed(0)) {
+			if(controller.isButtonPressed(3)) {
 				nextCommandType = CommandType.NOTHING;
-			} else if(controller.isButtonPressed(1)) {
-				nextCommandType = CommandType.RUN;
 			} else if(controller.isButtonPressed(2)) {
+				nextCommandType = CommandType.RUN;
+			} else if(controller.isButtonPressed(0)) {
 				nextCommandType = CommandType.CATCH;
-			} else if(controller.isButtonPressed(3)) {
+			} else if(controller.isButtonPressed(1)) {
 				nextCommandType = CommandType.ATTACK;
 			}
 			

@@ -114,4 +114,10 @@ public class CommandMap {
 	public Image getImage() {
 		return commandImage;
 	}
+	
+	public void clear() {
+		commandImageG.clear();
+		commandImageG.flush();
+		commandImage.flushPixelData();
+	}
 }
