@@ -10,6 +10,7 @@ import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.ScalableGame;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Vector2f;
+import org.newdawn.slick.opengl.renderer.*;
 
 
 public class Game extends BasicGame
@@ -20,6 +21,7 @@ public class Game extends BasicGame
 	private static ScalableGame scalableGame;
 
 	private CommandMap commandMap;
+	private MapRenderer mapRenderer;
 
 	private Player[] players;
 	private Basis[] basen;
@@ -48,10 +50,14 @@ public class Game extends BasicGame
 		};
 
 		commandMap = new CommandMap();
+
+		mapRenderer = new MapRenderer();
 	}
 
 	@Override
 	public void update(GameContainer gc, int passedTimeMS) throws SlickException {
+		mapRenderer.updateLogic(commandMap);
+
 		for(Player player : players) {
 			player.update(gc.getInput());
 		}
@@ -68,7 +74,8 @@ public class Game extends BasicGame
 	@Override
 
 	public void render(GameContainer gc, Graphics g) throws SlickException 	{
-		commandMap.draw(g);
+		//commandMap.draw(g);
+		mapRenderer.drawOverlays(g);
 		
 		for(Player player : players) {
 			player.render(commandMap, g);
@@ -89,6 +96,9 @@ public class Game extends BasicGame
 		{
 			GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 			int height = gd.getDisplayMode().getHeight() - 100;
+
+			// Maybe this switch has no effect.
+			//Renderer.setRenderer(new VAOGLRenderer());
 			
 			// Enforce a width that is compatible to our fixed ratio
 			int width = (int)(height * (16.0f / 9.0f));
