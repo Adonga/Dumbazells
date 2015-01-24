@@ -50,9 +50,15 @@ public class GameStates {
 			}
 			
 			for(int i =0; i<connectedControllers;i++){
-				if(controllers[i].isButtonPressed(0) && registeredPlayers<connectedControllers)
+				if(controllers[i].isButtonPressed(0) && registeredPlayers<connectedControllers && registerdController[i]==false){
+					registerdController[i] = true;
 					registeredPlayers++;
-			}
+					}
+				else if (controllers[i].isButtonPressed(1) && registeredPlayers>0){
+					registerdController[i] = false;
+					registeredPlayers--;
+					}
+				}
 			if(controllers.length>0)
 			{
 				if(controllers[0].isButtonPressed(7) && registeredPlayers>0){
@@ -88,10 +94,11 @@ public class GameStates {
 				e.printStackTrace();
 			}
 //			g.drawString("Press Start" , 0, 0);
-			start.draw(0, 0, 0.12f);
+			start.draw(0, 0, 0.016f);
 			for (int i =0; i < registeredPlayers; i++)
 			{
-				g.drawLine( 1 + i, 5 + i, 1 + i, 7 + i);
+//				g.drawLine( 1 + i, 5 , 1 + i, 7);
+				g.fillRect(4+2*i, 7, 1, 1);
 			}
 		}
 		else if(gameend){

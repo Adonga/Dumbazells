@@ -10,6 +10,7 @@ class MapRenderer {
     private Image battleGroundParticles[];
     private Image runGroundParticles[];
     private Image takeGroundParticles[];
+    private Image voidGroundParticles[];
     private Shader shader;
 
     class Particle {
@@ -26,10 +27,12 @@ class MapRenderer {
         battleGroundParticles = new Image[1];
         runGroundParticles = new Image[1];
         takeGroundParticles = new Image[1];
+        voidGroundParticles = new Image[1];
         try {
             battleGroundParticles[0] = new Image("images/battleground0.png");
             runGroundParticles[0] = new Image("images/runground0.png");
             takeGroundParticles[0] = new Image("images/takeground0.png");
+            voidGroundParticles[0] = new Image("images/voidground0.png");
         } catch (SlickException ex) {
             System.out.println(ex.toString());
         }
@@ -37,6 +40,7 @@ class MapRenderer {
         computeMipMaps(battleGroundParticles[0]);
         computeMipMaps(runGroundParticles[0]);
         computeMipMaps(takeGroundParticles[0]);
+        computeMipMaps(voidGroundParticles[0]);
 
         shader = new Shader("shader/symbol.vert", "shader/symbol.frag");
 
@@ -45,7 +49,7 @@ class MapRenderer {
         for(int i=0; i<NUM_PARTICLES; ++i) {
             particles[i] = new Particle();
             particles[i].lifeTime = (float)Math.random();
-            particles[i].sprite = runGroundParticles[0];
+            particles[i].sprite = voidGroundParticles[0];
             particles[i].position = new Vector2f();
      //       particles[i].show = false;
             randomizePosScale(i);
@@ -105,6 +109,6 @@ class MapRenderer {
         if(commandType == CommandType.ATTACK)     particles[particleID].sprite = battleGroundParticles[0];
         else if(commandType == CommandType.RUN)   particles[particleID].sprite = runGroundParticles[0];
         else if(commandType == CommandType.CATCH) particles[particleID].sprite = takeGroundParticles[0];
-        //else particles[particleID].show = false;
+        else particles[particleID].sprite = voidGroundParticles[0];
     }
 }
