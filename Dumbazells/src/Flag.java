@@ -16,7 +16,7 @@ public class Flag {
 
     public void update(GameContainer gc, int passedTimeMS) {
         if (carriedBy != null) {
-            this.position = carriedBy.position;
+            this.position = carriedBy.getPosition();
         }
     }
 

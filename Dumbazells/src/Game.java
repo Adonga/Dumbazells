@@ -60,9 +60,9 @@ public class Game extends BasicGame
 		}
 
 		for (Basis base : basen) {
-			base.update(gc, passedTimeMS);
+			base.update(gc, passedTimeMS,commandMap);
 		}
-
+		
 		for (Flag flag : flags) {
 			flag.update(gc, passedTimeMS);
 		}

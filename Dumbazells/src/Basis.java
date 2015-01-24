@@ -33,7 +33,7 @@ public class Basis {
 
     }
 
-    public void update(GameContainer gc, int passedTimeMS) {
+    public void update(GameContainer gc, int passedTimeMS, CommandMap commandMap) {
 
         changingSpawnRate += 0.003;
         if (changingSpawnRate >= 0.5f) {
@@ -42,7 +42,7 @@ public class Basis {
         }
 
         for (Bazell bazell : ownBazells) {
-            bazell.update(passedTimeMS);
+            bazell.update(passedTimeMS, commandMap);
         }
     }
 
