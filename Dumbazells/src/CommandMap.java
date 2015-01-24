@@ -53,7 +53,7 @@ public class CommandMap {
 		commandImageG.flush();
 		g.drawImage(commandImage, 0,0, Game.GAME_COORD_SIZE.x, Game.GAME_COORD_SIZE.y, 0,0, RESOLUTION_X, RESOLUTION_Y);
 		
-		commandImage.flushPixelData();
+		//commandImage.flushPixelData();
 	}
 	
 	public CommandType getCommandAt(Vector2f gamePosition) {
@@ -109,5 +109,9 @@ public class CommandMap {
 			}
 		}
 		return direction.getNormal();
+	}
+
+	public Image getImage() {
+		return commandImage;
 	}
 }

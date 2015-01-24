@@ -106,4 +106,8 @@ class Shader {
     public void setUniform(String location, float value) {
         GL20.glUniform1f(GL20.glGetUniformLocation(programID, location), value);
     }
+
+    public void setUniform(String location, float v0, float v1, float v2, float v3) {
+        GL20.glUniform4f(GL20.glGetUniformLocation(programID, location), v0, v1, v2, v3);
+    }
 }

@@ -11,7 +11,7 @@ public class Player {
 	static private final float cursorSpeed = 0.03f;
 	static private final float controllerDeadZone = 0.2f;
 	
-	private Circle paintCircle = new Circle(8.0f, 4.5f, 0.2f);
+	private Circle paintCircle = new Circle(8.0f, 4.5f, 1.2f);
 	private CommandType nextCommandType;
 	
 	private int controllerIndex;

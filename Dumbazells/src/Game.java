@@ -105,7 +105,7 @@ public class Game extends BasicGame
 		
 		commandMap.draw(g);
 
-		mapRenderer.drawOverlays(g);
+		mapRenderer.drawOverlays(g, commandMap.getImage());
 
 		gameState.render(g);
 		if(!gameState.registering)
