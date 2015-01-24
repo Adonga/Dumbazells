@@ -17,6 +17,8 @@ public class Player {
 	private int controllerIndex;
 	private Controller controller = null;
 	
+	int i=0;
+	
 	Player(int controllerIndex) {
 		this.controllerIndex = controllerIndex;
 		

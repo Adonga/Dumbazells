@@ -18,16 +18,20 @@ public class Game extends BasicGame
 {
 	public static final Vector2f GAME_COORD_SIZE = new Vector2f(16.0f, 9.0f);
 	public static final int NUM_FLAGS = 3;
-
+	public static final int MAX_NUM_PLAYERS = 4;
 	private static ScalableGame scalableGame;
-
+	
+	private GameStates gameState = new GameStates();
+	
 	private CommandMap commandMap;
 	private MapRenderer mapRenderer;
 
+	private int playerRegisterd =0;
+	
 	private Player[] players;
 	private Basis[] basen;
 	private Flag[] flags;
-
+	int i=0;
 	public Game() {
 		super("Dumbazells");
 	}
@@ -35,21 +39,11 @@ public class Game extends BasicGame
 	@Override
 	public void init(GameContainer gc) throws SlickException {
 
-		players = new Player[] { new Player(0), new Player(1) };
-
-		basen = new Basis[] {
-				new Basis(players[0], new Vector2f(Basis.BASE_SIZE + Basis.BASE_SIDE_DEADZONE + (float)Math.random() * (GAME_COORD_SIZE.getX() - 2*(Basis.BASE_SIZE + Basis.BASE_SIDE_DEADZONE)),
-						Basis.BASE_SIZE + Basis.BASE_SIDE_DEADZONE + (float)Math.random() * (GAME_COORD_SIZE.getY() - 2*(Basis.BASE_SIZE + Basis.BASE_SIDE_DEADZONE))), BaseTypes.Square),
-				new Basis(players[1], new Vector2f(Basis.BASE_SIZE + Basis.BASE_SIDE_DEADZONE + (float)Math.random() * (GAME_COORD_SIZE.getX() - 2*(Basis.BASE_SIZE + Basis.BASE_SIDE_DEADZONE)),
-						Basis.BASE_SIZE + Basis.BASE_SIDE_DEADZONE + (float)Math.random() * (GAME_COORD_SIZE.getY() - 2*(Basis.BASE_SIZE + Basis.BASE_SIDE_DEADZONE))), BaseTypes.Raute)
-		};
-
 		flags = new Flag[] {
 				new Flag(Flag.randFlagPosition(basen), basen),
 				new Flag(Flag.randFlagPosition(basen), basen),
 				new Flag(Flag.randFlagPosition(basen), basen)
 		};
-
 		commandMap = new CommandMap();
 
 		mapRenderer = new MapRenderer();
@@ -57,37 +51,78 @@ public class Game extends BasicGame
 
 	@Override
 	public void update(GameContainer gc, int passedTimeMS) throws SlickException {
-		mapRenderer.updateLogic(commandMap);
 
-		for(Player player : players) {
-			player.update(gc.getInput());
+		
+		if(gameState.registering){
+
+			playerRegisterd = gameState.init(gc.getInput());
+
+			if (playerRegisterd > 4)
+				playerRegisterd = MAX_NUM_PLAYERS;
+
+			players = new Player[playerRegisterd];
+			for (int i = 0; i < playerRegisterd; i++) {
+				players[i] = new Player(i);
+			}	
+			basen = new Basis[playerRegisterd];
+			BaseTypes[] baseTypes = {BaseTypes.Circle,BaseTypes.Triangle,BaseTypes.Square};
+			for (int i = 0; i < playerRegisterd; i++) {
+				basen[i] = new Basis( players[i], new Vector2f(
+								Basis.BASE_SIZE
+										+ Basis.BASE_SIDE_DEADZONE
+										+ (float) Math.random()
+										* (GAME_COORD_SIZE.getX() - 2 * (Basis.BASE_SIZE + Basis.BASE_SIDE_DEADZONE)),
+								Basis.BASE_SIZE + Basis.BASE_SIDE_DEADZONE
+										+ (float) Math.random()
+										* (GAME_COORD_SIZE.getY() - 2 * (Basis.BASE_SIZE + Basis.BASE_SIDE_DEADZONE))),baseTypes[i]);
+			}
+
+			flags = new Flag[] { new Flag(Flag.randFlagPosition(basen), basen),
+					new Flag(Flag.randFlagPosition(basen), basen),
+					new Flag(Flag.randFlagPosition(basen), basen)};
+		}else if(!gameState.gameend){
+		
+			for (Player player : players) {
+				player.update(gc.getInput());
+			}
+
+			for (Basis base : basen) {
+				base.update(gc, commandMap, flags,basen);
+			}
+
+			for (Flag flag : flags) {
+				flag.update(gc, passedTimeMS);
+			}
 		}
-
-		for (Basis base : basen) {
-			base.update(gc, commandMap, flags, basen);
-		}
-
-		for (Flag flag : flags) {
-			flag.update(gc, passedTimeMS);
+		else {
+			gameState.restart(gc.getInput());
 		}
 	}
 
 	@Override
 
 	public void render(GameContainer gc, Graphics g) throws SlickException 	{
+		
 		commandMap.draw(g);
+
 		mapRenderer.drawOverlays(g);
 
-		for (Basis base : basen) {
-			base.render(g);
-		}
+		gameState.render(g);
+		if(!gameState.registering)
+		{
+			for (Basis base : basen) {
+				base.render(g);
+			}
 
-		for (Flag flag : flags) {
-			flag.render(g);
-		}
 
-		for(Player player : players) {
-			player.render(commandMap, g);
+			for (Flag flag : flags) {
+				flag.render(g);
+			}
+
+			for (Player player : players) {
+				player.render(commandMap, g);
+			}
+
 		}
 
 	}
