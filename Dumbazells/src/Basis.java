@@ -59,15 +59,15 @@ public class Basis {
             switch (baseType) {
                 case Square:
                     Image baseSquare =  new Image("images/base_square.png");
-                    baseSquare.draw(getBasePosition().getX() - baseSquare.getWidth() * 0.5f * IMAGE_SCALE, getBasePosition().getY() - baseSquare.getHeight() * 0.5f * IMAGE_SCALE, IMAGE_SCALE);
+                    baseSquare.draw(getPosition().getX() - baseSquare.getWidth() * 0.5f * IMAGE_SCALE, getPosition().getY() - baseSquare.getHeight() * 0.5f * IMAGE_SCALE, IMAGE_SCALE);
                     break;
                 case Triange:
                     Image baseTriang =  new Image("images/base_triangle.png");
-                    baseTriang.draw(getBasePosition().getX() - baseTriang.getWidth() * 0.5f * IMAGE_SCALE, getBasePosition().getY() - baseTriang.getHeight() * 0.5f * IMAGE_SCALE, IMAGE_SCALE);
+                    baseTriang.draw(getPosition().getX() - baseTriang.getWidth() * 0.5f * IMAGE_SCALE, getPosition().getY() - baseTriang.getHeight() * 0.5f * IMAGE_SCALE, IMAGE_SCALE);
                     break;
                 case Circle:
                     Image baseCircle =  new Image("images/base_circle.png");
-                    baseCircle.draw(getBasePosition().getX() - baseCircle.getWidth() * 0.5f * IMAGE_SCALE, getBasePosition().getY() - baseCircle.getHeight() * 0.5f * IMAGE_SCALE, IMAGE_SCALE);
+                    baseCircle.draw(getPosition().getX() - baseCircle.getWidth() * 0.5f * IMAGE_SCALE, getPosition().getY() - baseCircle.getHeight() * 0.5f * IMAGE_SCALE, IMAGE_SCALE);
                     break;
             }
         } catch (SlickException e) {
