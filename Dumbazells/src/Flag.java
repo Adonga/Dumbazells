@@ -6,7 +6,7 @@ import org.newdawn.slick.geom.Vector2f;
 public class Flag {
 
     public static final float FLAG_SIZE = 0.15f;
-    public static final float FLAG_BASE_DEADZONE = 0.5f;
+    public static final float FLAG_BASE_DEADZONE = 0.8f;
 
     private Basis[] basen;
     private Vector2f position;
