@@ -58,8 +58,8 @@ public class GameStates {
 				if(controllers[0].isButtonPressed(7) && registeredPlayers>0){
 					registering = false;
 					}
-			}else
-				if(input.isKeyDown(0)){registering = false;}
+			}
+			if(input.isKeyDown(Input.KEY_0)){registering = false;}
 		return registeredPlayers;
 	}
 	
