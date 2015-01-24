@@ -128,6 +128,13 @@ public class Bazell {
 
 		bounceOnMap();
 		
+		if(commandMap.getCommandAt(position)== CommandType.NOTHING)
+		{
+			idle= true;
+			speed = 0;
+		}
+		else 
+			commandMap.getCommandAt(position);
 			
 		if(inCommandArea)
 	

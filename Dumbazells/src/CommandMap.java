@@ -7,14 +7,14 @@ import org.newdawn.slick.geom.Circle;
 
 
 public class CommandMap {
-	static final int RESOLUTION_X = 16 * 50;
-	static final int RESOLUTION_Y = 9 * 50;
+	static final int RESOLUTION_X = (int)(Game.GAME_COORD_SIZE.x * 50);
+	static final int RESOLUTION_Y = (int)(Game.GAME_COORD_SIZE.y * 50);
 	static final int GRADIENT_FILTER_RADIUS = 4;
 	
 	static final private Color[] COMMANDCOLORS = {
 		Color.black, //NOTHING
-		Color.yellow, //RUN
-		Color.blue, //CATCH
+		Color.blue, //RUN
+		Color.green, //CATCH
 		Color.red, //ATTACK
 	};
 	
@@ -41,12 +41,14 @@ public class CommandMap {
 	
 	public void draw(Graphics g) {
 		commandImageG.flush();
-		g.drawImage(commandImage, 0,0, 16.0f, 9.0f, 0,0, RESOLUTION_X, RESOLUTION_Y);
+		g.drawImage(commandImage, 0,0, Game.GAME_COORD_SIZE.x, Game.GAME_COORD_SIZE.y, 0,0, RESOLUTION_X, RESOLUTION_Y);
+		
+		commandImage.flushPixelData();
 	}
 	
 	public CommandType getCommandAt(Vector2f gamePosition) {
-		Color c = commandImageG.getPixel((int)(gameCoordToCommandCoordX(gamePosition.x)), 
-										 (int)(gameCoordToCommandCoordY(gamePosition.y)));
+		Color c = commandImage.getColor((int)(gameCoordToCommandCoordX(gamePosition.x)), 
+										(int)(gameCoordToCommandCoordY(gamePosition.y)));
 		
 		if(c == COMMANDCOLORS[CommandType.NOTHING.ordinal()])
 			return CommandType.NOTHING;
@@ -59,10 +61,10 @@ public class CommandMap {
 	}
 	
 	private float gameCoordToCommandCoordX(float x) {
-		return x / 16.0f * RESOLUTION_X;
+		return x / Game.GAME_COORD_SIZE.x * RESOLUTION_X;
 	}
 	private float gameCoordToCommandCoordY(float y) {
-		return y / 9.0f * RESOLUTION_Y;
+		return y / Game.GAME_COORD_SIZE.y * RESOLUTION_Y;
 	}
 	private float gameCoordToCommandCoordScale(float scale) {
 		return gameCoordToCommandCoordY(scale);
@@ -86,7 +88,7 @@ public class CommandMap {
 			for(int x = -r; x <= r; ++x) {
 				Vector2f pdir = new Vector2f(x,y);
 				pdir.normalise();
-				if(!onMap(x+cx,y+cy) || commandImageG.getPixel(x+cx, y+cy) == COMMANDCOLORS[CommandType.NOTHING.ordinal()])
+				if(!onMap(x+cx,y+cy) || commandImage.getColor(x+cx, y+cy) == COMMANDCOLORS[CommandType.NOTHING.ordinal()])
 					direction.sub(pdir);
 				else direction.add(pdir);
 			}
