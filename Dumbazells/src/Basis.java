@@ -10,6 +10,7 @@ public class Basis {
     public static final int MAX_NUMBER_BAZELLS = 15;
     public static final float BASE_SIZE = 0.9f;
     public static final float BASE_SIDE_DEADZONE = 0.2f;
+    public static final int MAX_BAZELLS_IN_BASE = 5;
 
     private Player ownedBy;
     private ArrayList<Bazell> ownBazells;
@@ -23,7 +24,6 @@ public class Basis {
         this.basePosition = position;
     }
 
-    // TODO: stop spawning if x Bazells in Base
     private void spawnBazels() {
 
         if (ownBazells.size() < MAX_NUMBER_BAZELLS) {
