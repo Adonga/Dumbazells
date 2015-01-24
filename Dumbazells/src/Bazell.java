@@ -47,7 +47,7 @@ public class Bazell {
 	private Image[] squareImages;
 	private Image[] triangleImages;
 
-	final float IMAGE_SCALE = 0.003f;
+	final float IMAGE_SCALE = 0.01f; // 0.003f
 	
 	private boolean deleted = false;
 	
@@ -311,7 +311,7 @@ public class Bazell {
 			case 0:
 
 				if (passedSteps > (STEPS_TO_AGGRO * 0.25f)) {
-					circleImages[1].draw(position.getX() - imageSizeScaled/2, position.getY() - imageSizeScaled/2, IMAGE_SCALE);
+					circleImages[1].draw(position.getX() - imageSizeScaled / 2, position.getY() - imageSizeScaled / 2, IMAGE_SCALE);
 				} else if (passedSteps > (STEPS_TO_AGGRO * 0.5f)) {
 					circleImages[2].draw(position.getX() - imageSizeScaled / 2, position.getY() - imageSizeScaled/2, IMAGE_SCALE);
 				} else if (passedSteps > (STEPS_TO_AGGRO * 0.75f)) {
@@ -319,7 +319,7 @@ public class Bazell {
 				} else if (passedSteps > STEPS_TO_AGGRO) {
 					circleImages[4].draw(position.getX() - imageSizeScaled / 2, position.getY() - imageSizeScaled / 2, IMAGE_SCALE);
 				} else {
-					circleImages[0].draw(position.getX() - imageSizeScaled/2, position.getY() - imageSizeScaled/2, IMAGE_SCALE);
+					circleImages[0].draw(position.getX() - imageSizeScaled / 2, position.getY() - imageSizeScaled / 2, IMAGE_SCALE);
 				}
 				break;
 

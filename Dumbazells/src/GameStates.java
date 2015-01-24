@@ -59,7 +59,10 @@ public class GameStates {
 					registering = false;
 					}
 			}
-			if(input.isKeyDown(Input.KEY_0)){registering = false;}
+			if(input.isKeyDown(Input.KEY_0)) {
+				registering = false;
+				return ++registeredPlayers;
+			}
 		return registeredPlayers;
 	}
 	
