@@ -110,4 +110,10 @@ public class CommandMap {
 		}
 		return direction.getNormal();
 	}
+	
+	public void clear() {
+		commandImageG.clear();
+		commandImageG.flush();
+		commandImage.flushPixelData();
+	}
 }
