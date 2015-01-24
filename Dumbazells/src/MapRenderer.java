@@ -27,23 +27,30 @@ class MapRenderer {
     private Particle particles[];
 
     public MapRenderer() {
-        battleGroundParticles = new Image[1];
-        runGroundParticles = new Image[1];
-        takeGroundParticles = new Image[1];
-        voidGroundParticles = new Image[1];
+        battleGroundParticles = new Image[3];
+        runGroundParticles = new Image[3];
+        takeGroundParticles = new Image[2];
+        voidGroundParticles = new Image[3];
         try {
             battleGroundParticles[0] = new Image("images/battleground0.png");
+            battleGroundParticles[1] = new Image("images/battleground1.png");
+            battleGroundParticles[2] = new Image("images/battleground2.png");
             runGroundParticles[0] = new Image("images/runground0.png");
+            runGroundParticles[1] = new Image("images/runground1.png");
+            runGroundParticles[2] = new Image("images/runground2.png");
             takeGroundParticles[0] = new Image("images/takeground0.png");
+            takeGroundParticles[1] = new Image("images/takeground1.png");
             voidGroundParticles[0] = new Image("images/voidground0.png");
+            voidGroundParticles[1] = new Image("images/voidground1.png");
+            voidGroundParticles[2] = new Image("images/voidground2.png");
         } catch (SlickException ex) {
             System.out.println(ex.toString());
         }
 
-        computeMipMaps(battleGroundParticles[0]);
-        computeMipMaps(runGroundParticles[0]);
-        computeMipMaps(takeGroundParticles[0]);
-        computeMipMaps(voidGroundParticles[0]);
+        for(int i=0; i<battleGroundParticles.length; ++i) computeMipMaps(battleGroundParticles[i]);
+        for(int i=0; i<runGroundParticles.length; ++i)    computeMipMaps(runGroundParticles[i]);
+        for(int i=0; i<takeGroundParticles.length; ++i)   computeMipMaps(takeGroundParticles[i]);
+        for(int i=0; i<voidGroundParticles.length; ++i)   computeMipMaps(voidGroundParticles[i]);
 
         shader = new Shader("shader/simple.vert", "shader/symbol.frag");
         shader.start();
@@ -140,10 +147,10 @@ class MapRenderer {
         //    particles[particleID].show = true;
          //   particles[particleID].lifeTime = 1.0f;
         ///}
-        if(type == 0)      particles[particleID].sprite = battleGroundParticles[0];
-        else if(type == 2) particles[particleID].sprite = runGroundParticles[0];
-        else if(type == 1) particles[particleID].sprite = takeGroundParticles[0];
-        else particles[particleID].sprite = voidGroundParticles[0];
+        if(type == 0)      particles[particleID].sprite = battleGroundParticles[(int)(Math.random() * battleGroundParticles.length)];
+        else if(type == 2) particles[particleID].sprite = runGroundParticles[(int)(Math.random() * runGroundParticles.length)];
+        else if(type == 1) particles[particleID].sprite = takeGroundParticles[(int)(Math.random() * takeGroundParticles.length)];
+        else particles[particleID].sprite = voidGroundParticles[(int)(Math.random() * voidGroundParticles.length)];
         particles[particleID].type = type;
     }
 }
