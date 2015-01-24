@@ -50,11 +50,11 @@ public class CommandMap {
 		Color c = commandImage.getColor((int)(gameCoordToCommandCoordX(gamePosition.x)), 
 										(int)(gameCoordToCommandCoordY(gamePosition.y)));
 		
-		if(c == COMMANDCOLORS[CommandType.NOTHING.ordinal()])
+		if(c.equals(COMMANDCOLORS[CommandType.NOTHING.ordinal()]))
 			return CommandType.NOTHING;
-		else if(c == COMMANDCOLORS[CommandType.RUN.ordinal()])
+		else if(c.equals(COMMANDCOLORS[CommandType.RUN.ordinal()]))
 			return CommandType.RUN;
-		else if(c == COMMANDCOLORS[CommandType.ATTACK.ordinal()])
+		else if(c.equals(COMMANDCOLORS[CommandType.ATTACK.ordinal()]))
 			return CommandType.ATTACK;
 		else
 			return CommandType.CATCH;
@@ -88,7 +88,7 @@ public class CommandMap {
 			for(int x = -r; x <= r; ++x) {
 				Vector2f pdir = new Vector2f(x,y);
 				pdir.normalise();
-				if(!onMap(x+cx,y+cy) || commandImage.getColor(x+cx, y+cy) == COMMANDCOLORS[CommandType.NOTHING.ordinal()])
+				if(!onMap(x+cx,y+cy) || commandImage.getColor(x+cx, y+cy).equals(COMMANDCOLORS[CommandType.NOTHING.ordinal()]))
 					direction.sub(pdir);
 				else direction.add(pdir);
 			}
