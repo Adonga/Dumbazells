@@ -89,7 +89,7 @@ public class Game extends BasicGame
 			for (Basis base : basen) {
 				base.update(gc, commandMap, flags,basen);
 				if(base.GetNumFlags() >= 3) {
-					// todo win.
+					gameState.playerHasWon(base);
 				}
 			}
 
@@ -100,7 +100,7 @@ public class Game extends BasicGame
 			
 		}
 		else {
-			gameState.restartAfterGameOverOrWon();
+			gameState.restart();
 		}
 	}
 
@@ -113,7 +113,7 @@ public class Game extends BasicGame
 		mapRenderer.drawOverlays(g, commandMap.getImage());
 
 		gameState.render(g);
-		if(!gameState.registering)
+		if(!gameState.registering && ! gameState.gameend)
 		{
 			for (Basis base : basen) {
 				base.render(g);
