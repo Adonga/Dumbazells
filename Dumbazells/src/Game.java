@@ -66,7 +66,14 @@ public class Game extends BasicGame
 				players[i] = new Player(i);
 			}	
 			basen = new Basis[playerRegisterd];
-			BaseTypes[] baseTypes = {BaseTypes.Circle,BaseTypes.Raute,BaseTypes.Square,BaseTypes.Triangle};
+
+			BaseTypes[] baseTypes = {
+					BaseTypes.Circle,
+					BaseTypes.Raute,
+					BaseTypes.Square,
+					BaseTypes.Triangle
+			};
+
 			for (int i = 0; i < playerRegisterd; i++) {
 				basen[i] = new Basis( players[i], new Vector2f(
 								Basis.BASE_SIZE
@@ -76,12 +83,17 @@ public class Game extends BasicGame
 								Basis.BASE_SIZE + Basis.BASE_SIDE_DEADZONE
 										+ (float) Math.random()
 										* (GAME_COORD_SIZE.getY() - 2 * (Basis.BASE_SIZE + Basis.BASE_SIDE_DEADZONE))),baseTypes[i]);
-			}
+				// set cursor to home base
+ 				players[i].setCursorStartPosition(basen[i]);
+ 			}
 
-			flags = new Flag[] { new Flag(Flag.randFlagPosition(basen), basen),
+			flags = new Flag[] {
 					new Flag(Flag.randFlagPosition(basen), basen),
-					new Flag(Flag.randFlagPosition(basen), basen)};
-		}else if(!gameState.gameend){
+					new Flag(Flag.randFlagPosition(basen), basen),
+					new Flag(Flag.randFlagPosition(basen), basen)
+			};
+
+		} else if(!gameState.gameend){
 		
 			for (Player player : players) {
 				player.update(gc.getInput());

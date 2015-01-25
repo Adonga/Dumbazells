@@ -39,9 +39,9 @@ public class Player {
 		try {
 			playerImages = new Image[] {
 					new Image("images/player_circle.png"),
-					new Image("images/player_triangle.png"),
+					new Image("images/player_raute.png"),
 					new Image("images/player_square.png"),
-					new Image("images/player_raute.png")
+					new Image("images/player_triangle.png")
 			};
 		} catch (SlickException e) {
 			e.printStackTrace();
@@ -49,7 +49,10 @@ public class Player {
 
 	}
 
-
+	public void setCursorStartPosition(Basis base) {
+		paintCircle.setCenterX(base.getPosition().getX());
+		paintCircle.setCenterY(base.getPosition().getY());
+	}
 	
 	public void update(Input input) {
 		
@@ -100,24 +103,22 @@ public class Player {
 			movementY *= 2.0f;
 		}
 		
-		if(paintCircle.getCenterX() + movementX>=0 &&paintCircle.getCenterX() + movementX<=16  )
+		if(paintCircle.getCenterX() + movementX >= 0 && paintCircle.getCenterX() + movementX <= 16  )
 			paintCircle.setCenterX(paintCircle.getCenterX() + movementX);
 		
-		if(paintCircle.getCenterY() + movementY>=0 && paintCircle.getCenterY() + movementY<=9 )
+		if(paintCircle.getCenterY() + movementY >= 0 && paintCircle.getCenterY() + movementY <= 9 )
 			paintCircle.setCenterY(paintCircle.getCenterY() + movementY);
 		
 	}
 	
 	public void render(CommandMap commandMap, Graphics g) {
-		if(nextCommandType != null) {
-			commandMap.paint(paintCircle, nextCommandType);
-		}
-
-		g.setColor(Color.pink);
-		//g.draw(paintCircle);
 
 		playerImages[controllerIndex].draw(paintCircle.getCenterX() - playerImages[controllerIndex].getWidth() * PLAYER_SCALE * 0.5f,
 				paintCircle.getCenterY() - playerImages[controllerIndex].getHeight() * PLAYER_SCALE * 0.5f, PLAYER_SCALE);
+
+		if(nextCommandType != null) {
+			commandMap.paint(paintCircle, nextCommandType);
+		}
 	}
 
 	public int getControlerIndex() {
