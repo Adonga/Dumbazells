@@ -1,6 +1,5 @@
 import java.util.ArrayList;
 
-import org.newdawn.slick.geom.Circle;
 import org.newdawn.slick.geom.Vector2f;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -35,8 +34,6 @@ public class Bazell {
 	private Vector2f position; 		//
 	private Vector2f direction = new Vector2f();		//
 	private boolean bouncedLastFrame = false;
-	
-	private Image sprite;
 	
 	private Flag owningFlag = null;
 
@@ -113,22 +110,22 @@ public class Bazell {
 	//simple method bounces on map edges
 	private void bounceOnMap()
 	{
-		if(position.x <= 0)
+		if(position.getX() - circleImages[0].getWidth() * IMAGE_SCALE * 0.5f <= 0)
 		{
-			position.x = 0.001f;
+			position.x = 0.01f + circleImages[0].getWidth() * IMAGE_SCALE * 0.5f;
 			direction.x = -direction.x;
 		}
-		else if(position.x + circleImages[0].getWidth() * IMAGE_SCALE * 0.5f >= Game.GAME_COORD_SIZE.x)
+		else if(position.getX() + circleImages[0].getWidth() * IMAGE_SCALE * 0.5f >= Game.GAME_COORD_SIZE.x)
 		{
 			position.x = 15.99f - circleImages[0].getWidth() * IMAGE_SCALE  * 0.5f;
 			direction.x = -direction.x;
 		}
-		if(position.y <= 0 )
+		if(position.getY()  - circleImages[0].getHeight() * IMAGE_SCALE * 0.5f <= 0 )
 		{
-			position.y = 0.001f;
+			position.y = 0.01f + circleImages[0].getHeight() * IMAGE_SCALE * 0.5f;
 			direction.y = -direction.y;
 		}
-		else if(position.y + circleImages[0].getWidth() * IMAGE_SCALE  * 0.5f >= Game.GAME_COORD_SIZE.y){
+		else if(position.getY() + circleImages[0].getHeight() * IMAGE_SCALE  * 0.5f >= Game.GAME_COORD_SIZE.y){
 			direction.y = -direction.y;
 			position.y = 8.999999f - circleImages[0].getWidth() * IMAGE_SCALE  * 0.5f;
 		}

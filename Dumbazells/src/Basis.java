@@ -111,6 +111,8 @@ public class Basis {
                 baseRaute.draw(getPosition().getX() - baseRaute.getWidth() * 0.5f * IMAGE_SCALE,
                         getPosition().getY() - baseRaute.getHeight() * 0.5f * IMAGE_SCALE, IMAGE_SCALE);
                 break;
+		default:
+			break;
         }
 
         for (Bazell bazell : ownBazells) {

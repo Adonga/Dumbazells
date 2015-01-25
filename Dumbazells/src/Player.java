@@ -1,6 +1,6 @@
+
 import org.lwjgl.input.Controller;
 import org.lwjgl.input.Controllers;
-import org.lwjgl.util.vector.Vector2f;
 import org.newdawn.slick.*;
 import org.newdawn.slick.geom.Circle;
 
@@ -112,7 +112,7 @@ public class Player {
 	}
 	
 	public void render(CommandMap commandMap, Graphics g) {
-
+		g.setColor(Color.white);
 		playerImages[controllerIndex].draw(paintCircle.getCenterX() - playerImages[controllerIndex].getWidth() * PLAYER_SCALE * 0.5f,
 				paintCircle.getCenterY() - playerImages[controllerIndex].getHeight() * PLAYER_SCALE * 0.5f, PLAYER_SCALE);
 
