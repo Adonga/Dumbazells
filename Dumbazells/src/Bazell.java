@@ -319,10 +319,11 @@ public class Bazell {
 		if(commandArea != CommandType.RUN)
 			speed *= FRICTION;
 		
-		// lose flag at own base
+		// loose flag at own base
 		if(owningFlag != null && ownBasis.getPosition().distance(owningFlag.getPosition()) < Basis.BASE_SIZE) {
 			owningFlag.setCarriedBy(null);
 			owningFlag = null;
+			position = new Vector2f(oldPosition);
 		}
 	}
 	
