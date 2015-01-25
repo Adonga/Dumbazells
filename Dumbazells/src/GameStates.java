@@ -1,10 +1,6 @@
-
 import org.lwjgl.input.Controller;
 import org.lwjgl.input.Controllers;
-import org.newdawn.slick.Graphics;
-import org.newdawn.slick.Image;
-import org.newdawn.slick.Input;
-import org.newdawn.slick.SlickException;
+import org.newdawn.slick.*;
 
 
 public class GameStates {
@@ -27,9 +23,25 @@ public class GameStates {
 	private Image won;
 	private Image winner;
 	private Image[] bazell = new Image[4];
-	
+
+	Sound mainTheme;
+	Sound menuTrack;
+	Sound win;
+	boolean firstStartMainGame = true;
+	boolean firstStartMenu = true;
+	boolean winOnce = true;
+
 	public GameStates() {
-		
+
+		try {
+			mainTheme = new Sound("sounds/track01.aif");
+			menuTrack = new Sound("sounds/menu.aif");
+			win = new Sound("sounds/win.aif");
+
+		} catch (SlickException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	public int init(Input input) {
@@ -38,55 +50,70 @@ public class GameStates {
 			bazell[1]= new Image("images/Winner/Raute.png");
 			bazell[2]= new Image("images/Winner/Square.png");
 			bazell[3]= new Image("images/Winner/Triangle.png");
-		
+
 		} catch (SlickException e) {
 			e.printStackTrace();
 		}
-		
+
 		int connectedControllers = 0;
 //		registeredPlayers = 0;
 
-			// Find controllerIndex'th xbox controller
-			for (int i = 0; i < Controllers.getControllerCount();i++) {
-				if (Controllers.getController(i).getName().toLowerCase().contains("xbox")) {
-					++connectedControllers;
+		// Find controllerIndex'th xbox controller
+		for (int i = 0; i < Controllers.getControllerCount();i++) {
+			if (Controllers.getController(i).getName().toLowerCase().contains("xbox")) {
+				++connectedControllers;
+			}
+		}
+		controllers = new Controller[connectedControllers];
+		registerdController = new boolean[connectedControllers];
+		int gamePadIndex = 0;
+		for (int i = 0; i < Controllers.getControllerCount();i++) {
+			if (Controllers.getController(i).getName().toLowerCase().contains("xbox")) {
+				controllers[gamePadIndex] = Controllers.getController(i);
+				gamePadIndex++;
+			}
+		}
+
+		for(int i =0; i<connectedControllers;i++){
+			if(controllers[i].isButtonPressed(0) && registeredPlayers<connectedControllers && registerdController[i]==false){
+				registerdController[i] = true;
+				registeredPlayers++;
+				}
+			else if (controllers[i].isButtonPressed(1) && registeredPlayers>0){
+				registerdController[i] = false;
+				registeredPlayers--;
 				}
 			}
-			controllers = new Controller[connectedControllers];
-			registerdController = new boolean[connectedControllers];
-			int gamePadIndex = 0;
-			for (int i = 0; i < Controllers.getControllerCount();i++) {
-				if (Controllers.getController(i).getName().toLowerCase().contains("xbox")) {
-					controllers[gamePadIndex] = Controllers.getController(i);
-					gamePadIndex++;
+		if(controllers.length>0)
+		{
+			for (Controller controller : controllers) {
+				if (controller.isButtonPressed(7) && registeredPlayers > 0) {
+					registering = false;
+//					gameend = true; // for insta gameover
+					gamestart = true;
 				}
 			}
-			
-			for(int i =0; i<connectedControllers;i++){
-				if(controllers[i].isButtonPressed(0) && registeredPlayers<connectedControllers && registerdController[i]==false){
-					registerdController[i] = true;
-					registeredPlayers++;
-					}
-				else if (controllers[i].isButtonPressed(1) && registeredPlayers>0){
-					registerdController[i] = false;
-					registeredPlayers--;
-					}
-				}
-			if(controllers.length>0)
-			{
-				for(int i =0; i<controllers.length; i++){
-					if(controllers[i].isButtonPressed(7) && registeredPlayers>0){
-						registering = false;
-//						gameend = true; // for insta gameover
-					}
-				}
+		}
+
+		if(input.isKeyDown(Input.KEY_0) ) {
+			registering = false;
+			if(registeredPlayers<4)
+				++registeredPlayers;
+			gamestart = true;
+		}
+
+		if ((gameend || gameWon || registering) && firstStartMenu) {
+			mainTheme.stop();
+			menuTrack.loop();
+			firstStartMenu = false;
+		}
+
+		if (gamestart) {
+			if (firstStartMainGame) {
+				menuTrack.stop();
+				mainTheme.loop();
 			}
-			
-			if(input.isKeyDown(Input.KEY_0) ) {
-				registering = false;
-				if(registeredPlayers<4)
-					++registeredPlayers;
-			}
+		}
 		return registeredPlayers;
 	}
 	
@@ -100,6 +127,8 @@ public class GameStates {
 				gamestart = false;
 				gameWon =false;
 				registering = true;
+				firstStartMenu = true;
+				winOnce = true;
 			}
 		}
 		if(input.isKeyDown(Input.KEY_SPACE)){
@@ -107,7 +136,10 @@ public class GameStates {
 			gameend = false;
 			gamestart = false;
 			gameWon =false;
-			registering = true;}
+			registering = true;
+			firstStartMenu = true;
+			winOnce = true;
+		}
 	}
 	
 	public void playerHasWon(Basis playersBase){
@@ -139,6 +171,9 @@ public class GameStates {
 		}
 		else if (gameend && !gameWon)
 		{
+			firstStartMainGame = true;
+			mainTheme.stop();
+			firstStartMenu = true;
 			if(gameOver == null){
 				try {
 					gameOver = new Image("images/GameOver.png");
@@ -149,6 +184,14 @@ public class GameStates {
 			gameOver.draw(0, 0, 0.0156f);
 		}
 		else if(gameend && gameWon){
+			if (winOnce) {
+				winOnce = false;
+				win.play();
+			}
+			firstStartMainGame = true;
+			mainTheme.stop();
+			firstStartMenu = true;
+
 			if(won == null){
 				try {
 					won = new Image("images/Win.png");

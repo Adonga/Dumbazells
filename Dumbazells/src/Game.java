@@ -43,6 +43,7 @@ public class Game extends BasicGame
 		commandMap = new CommandMap();
 
 		mapRenderer = new MapRenderer();
+
 	}
 
 	@Override
@@ -109,7 +110,7 @@ public class Game extends BasicGame
 	        });
 			
 
-//			gameState.playerHasWon(basen[0]); //for insta win
+			//gameState.playerHasWon(basen[0]); //for insta win
 
 			for (Basis base : basen) {
 				base.update(gc, commandMap, flags, allBazells);
