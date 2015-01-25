@@ -320,7 +320,7 @@ public class Bazell {
 			speed *= FRICTION;
 		
 		// lose flag at own base
-		if(owningFlag != null && ownBasis.getPosition().distance(position) < Basis.BASE_SIZE) {
+		if(owningFlag != null && ownBasis.getPosition().distance(owningFlag.getPosition()) < Basis.BASE_SIZE) {
 			owningFlag.setCarriedBy(null);
 			owningFlag = null;
 		}
