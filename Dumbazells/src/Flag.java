@@ -9,31 +9,38 @@ public class Flag {
     static final float IMG_SCALE = 0.009f;
 
     private Basis[] basen;
-    private Vector2f position;
+    private Vector2f middleposition;
     private Bazell carriedBy;
 
     Image flagImg;
 
     public Flag(Vector2f position, Basis[] basen) {
         this.basen = basen;
-        this.position = position;
+        this.middleposition = position;
 
         try {
             flagImg = new Image("images/flag.png");
         } catch (SlickException e) {
             e.printStackTrace();
         }
+        middleposition.x = middleposition.x + flagImg.getWidth() * IMG_SCALE * 0.5f;
+        middleposition.y = middleposition.y + flagImg.getWidth() * IMG_SCALE * 0.5f;
     }
 
     public void update(GameContainer gc, int passedTimeMS) {
         if (carriedBy != null) {
-            this.position = carriedBy.getPosition();
+            this.middleposition = carriedBy.getPosition();
         }
     }
 
     public void render(Graphics graphics) {
-
-        flagImg.draw(getPosition().getX(), getPosition().getY(), IMG_SCALE);
+        flagImg.draw(getPosition().getX() -flagImg.getWidth() * IMG_SCALE * 0.5f ,
+        		getPosition().getY() -flagImg.getWidth() * IMG_SCALE * 0.5f
+        		, IMG_SCALE);
+    	graphics.setColor(Color.pink);
+    	graphics.fillRect(getPosition().getX() - flagImg.getWidth() * 0.5f * IMG_SCALE-0.05f
+    			, getPosition().getY() - flagImg.getHeight() * 0.5f * IMG_SCALE -0.05f
+    			, 0.1f, 0.1f);
     }
 
     public void setCarriedBy(Bazell carriedBy) {
@@ -41,7 +48,8 @@ public class Flag {
     }
 
     public Vector2f getPosition() {
-        return new Vector2f(position.getX() - flagImg.getWidth() * 0.5f * IMG_SCALE, position.getY() - flagImg.getHeight() * 0.5f * IMG_SCALE);
+        return new Vector2f(middleposition.getX(),
+        		middleposition.getY());
     }
 
     public Bazell getCarriedBy() {

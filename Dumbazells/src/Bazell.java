@@ -1,6 +1,5 @@
 import java.util.ArrayList;
 
-import org.newdawn.slick.geom.Circle;
 import org.newdawn.slick.geom.Vector2f;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -36,8 +35,6 @@ public class Bazell {
 	private Vector2f direction = new Vector2f();		//
 	private boolean bouncedLastFrame = false;
 	
-	private Image sprite;
-	
 	private Flag owningFlag = null;
 
 	private Image[] circleImages;
@@ -45,11 +42,13 @@ public class Bazell {
 	private Image[] squareImages;
 	private Image[] triangleImages;
 
-	final float IMAGE_SCALE = 0.01f; // 0.003f
+	static final float IMAGE_SCALE = 0.01f; // 0.003f
 	
-	private boolean deleted = false;
+	private boolean dead = false;
+	private int deadTimer = 0; 
+	static final int DEAD_DURATION = 400;
 	
-	public boolean NeedsDelete() { return deleted; }
+	public boolean NeedsDelete() { return dead && deadTimer > DEAD_DURATION; }
 	
 	public Bazell(int PlayerIndex,Vector2f position)
 	{
@@ -66,7 +65,8 @@ public class Bazell {
 						new Image("images/circle/smile.png"),
 						new Image("images/circle/normal.png"),
 						new Image("images/circle/sad.png"),
-						new Image("images/circle/angry.png")
+						new Image("images/circle/angry.png"),
+						new Image("images/circle/dead.png")
 				};
 
 			if(rauteImages == null)
@@ -75,7 +75,8 @@ public class Bazell {
 						new Image("images/raute/smile.png"),
 						new Image("images/raute/normal.png"),
 						new Image("images/raute/sad.png"),
-						new Image("images/raute/angry.png")
+						new Image("images/raute/angry.png"),
+						new Image("images/raute/dead.png")
 				};
 
 			if(squareImages == null)
@@ -84,7 +85,8 @@ public class Bazell {
 						new Image("images/square/smile.png"),
 						new Image("images/square/normal.png"),
 						new Image("images/square/sad.png"),
-						new Image("images/square/angry.png")
+						new Image("images/square/angry.png"),
+						new Image("images/square/dead.png")
 				};
 
 			if(triangleImages == null)
@@ -93,7 +95,8 @@ public class Bazell {
 						new Image("images/triangle/smile.png"),
 						new Image("images/triangle/normal.png"),
 						new Image("images/triangle/sad.png"),
-						new Image("images/triangle/angry.png")
+						new Image("images/triangle/angry.png"),
+						new Image("images/triangle/dead.png")
 				};
 
 		} catch (SlickException e) {
@@ -113,22 +116,22 @@ public class Bazell {
 	//simple method bounces on map edges
 	private void bounceOnMap()
 	{
-		if(position.x <= 0)
+		if(position.getX() - circleImages[0].getWidth() * IMAGE_SCALE * 0.5f <= 0)
 		{
-			position.x = 0.001f;
+			position.x = 0.01f + circleImages[0].getWidth() * IMAGE_SCALE * 0.5f;
 			direction.x = -direction.x;
 		}
-		else if(position.x + circleImages[0].getWidth() * IMAGE_SCALE * 0.5f >= Game.GAME_COORD_SIZE.x)
+		else if(position.getX() + circleImages[0].getWidth() * IMAGE_SCALE * 0.5f >= Game.GAME_COORD_SIZE.x)
 		{
 			position.x = 15.99f - circleImages[0].getWidth() * IMAGE_SCALE  * 0.5f;
 			direction.x = -direction.x;
 		}
-		if(position.y <= 0 )
+		if(position.getY()  - circleImages[0].getHeight() * IMAGE_SCALE * 0.5f <= 0 )
 		{
-			position.y = 0.001f;
+			position.y = 0.01f + circleImages[0].getHeight() * IMAGE_SCALE * 0.5f;
 			direction.y = -direction.y;
 		}
-		else if(position.y + circleImages[0].getWidth() * IMAGE_SCALE  * 0.5f >= Game.GAME_COORD_SIZE.y){
+		else if(position.getY() + circleImages[0].getHeight() * IMAGE_SCALE  * 0.5f >= Game.GAME_COORD_SIZE.y){
 			direction.y = -direction.y;
 			position.y = 8.999999f - circleImages[0].getWidth() * IMAGE_SCALE  * 0.5f;
 		}
@@ -166,7 +169,7 @@ public class Bazell {
 		
 		for(int i=min; i<allBazells.size(); ++i) {
 			Bazell other = allBazells.get(i);
-			if(other.deleted || other.amok ||
+			if(other.dead || other.amok ||
 			  (!amok && other.playerIndex == playerIndex) || other == this) continue;
 			
 			if(other.getPosition().x - ACTION_RADIUS > position.x + ACTION_RADIUS) // won't find anything anymore
@@ -184,7 +187,7 @@ public class Bazell {
 	private void die() {
 		if(amok) return; // cannot die!
 		
-		deleted = true;
+		dead = true;
 		if(owningFlag != null) {
 			owningFlag.setCarriedBy(null);
 			owningFlag = null;
@@ -237,7 +240,10 @@ public class Bazell {
 	}
 	
 	public void update(CommandMap commandMap, Flag[] flags, Basis ownBasis, ArrayList<Bazell> allbazells){
-		if(deleted) return;
+		if(dead) {
+			++deadTimer;
+			return;
+		}
 		
 		oldPosition = new Vector2f(position);
 
@@ -340,6 +346,8 @@ public class Bazell {
 		int imageIndex = -1;
 		if(amok) {
 			imageIndex = 4;
+		} else if (dead) {
+			imageIndex = 5;
 		} else {
 			int aggro = passedAgroSteps;
 			do {

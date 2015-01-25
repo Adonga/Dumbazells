@@ -17,7 +17,6 @@ public class GameStates {
 	private boolean[] registerdController;
 	
 	private int registeredPlayers =0;
-	private int i =0;
 	
 	private Image start;
 	private Image gameOver;
@@ -157,10 +156,9 @@ public class GameStates {
 	public void render(Graphics g){
 		if(registering)
 		{
-			if(i ==0){
+			if(start == null){
 				try {
 					start = new Image("images/Start.png");
-					i++;
 				} catch (SlickException e) {
 					e.printStackTrace();
 				}
@@ -168,9 +166,7 @@ public class GameStates {
 			start.draw(0, 0, 0.0158f);
 			for (int i =0; i < registeredPlayers; i++)
 			{
-//				g.fillRect(4+2*i, 7, 1, 1);
 				bazell[i].draw(4+2*i, 6.5f, BAZELL_SCALE * 0.4f);
-				
 			}
 		}
 		else if (gameend && !gameWon)
@@ -178,10 +174,9 @@ public class GameStates {
 			firstStartMainGame = true;
 			mainTheme.stop();
 			firstStartMenu = true;
-			if(i!=0){
+			if(gameOver == null){
 				try {
 					gameOver = new Image("images/GameOver.png");
-					i=0;
 				} catch (SlickException e) {
 					e.printStackTrace();
 				}
@@ -196,10 +191,10 @@ public class GameStates {
 			firstStartMainGame = true;
 			mainTheme.stop();
 			firstStartMenu = true;
-			if(i!=0){
+
+			if(won == null){
 				try {
 					won = new Image("images/Win.png");
-					i=0;
 				} catch (SlickException e) {
 					e.printStackTrace();
 				}

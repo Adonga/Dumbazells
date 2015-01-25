@@ -4,16 +4,20 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.lwjgl.opengl.GL11;
-import org.newdawn.slick.*;
+import org.newdawn.slick.AppGameContainer;
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.BasicGame;
+import org.newdawn.slick.ScalableGame;
+import org.newdawn.slick.SlickException;
 import org.newdawn.slick.geom.Vector2f;
-import org.newdawn.slick.opengl.renderer.*;
+
 
 
 public class Game extends BasicGame
 {
 	public static final Vector2f GAME_COORD_SIZE = new Vector2f(16.0f, 9.0f);
-	public static final int NUM_FLAGS = 3;
+	public static final int NUM_FLAGS = 5;
 	public static final int MAX_NUM_PLAYERS = 4;
 	private static ScalableGame scalableGame;
 	
@@ -106,7 +110,7 @@ public class Game extends BasicGame
 	        });
 			
 
-			gameState.playerHasWon(basen[0]); //for insta win
+			//gameState.playerHasWon(basen[0]); //for insta win
 
 			for (Basis base : basen) {
 				base.update(gc, commandMap, flags, allBazells);
