@@ -5,8 +5,8 @@ import java.util.ArrayList;
 
 public class Basis {
 
-    public static final int MAX_NUMBER_BAZELLS = 15;
-    public static final float BASE_SIZE = 0.7f;
+    public static final int MAX_NUMBER_BAZELLS = 10;
+    public static final float BASE_SIZE = 1.0f;
     public static final float BASE_SIDE_DEADZONE = 0.3f;
     public static final int MAX_BAZELLS_IN_BASE = 5;
 
@@ -14,7 +14,7 @@ public class Basis {
 
     private Player ownedBy;
     private ArrayList<Bazell> ownBazells;
-    private Vector2f baseMiddlePosition;
+    private Vector2f basePosition;
 
     BaseTypes baseType;
 
@@ -32,7 +32,7 @@ public class Basis {
     public Basis(Player owner, Vector2f position, BaseTypes baseType) {
         this.ownedBy = owner;
         this.ownBazells = new ArrayList<Bazell>();
-        this.baseMiddlePosition = position;
+        this.basePosition = position;
         this.baseType = baseType;
 
         try {
@@ -43,15 +43,13 @@ public class Basis {
         } catch (SlickException e) {
             e.printStackTrace();
         }
-        baseMiddlePosition.x  = position.x + baseSquare.getWidth() * 0.5f * IMAGE_SCALE;
-        baseMiddlePosition.y  = position.y + baseSquare.getHeight() * 0.5f * IMAGE_SCALE;
 
     }
 
     private void spawnBazels() {
 
         float angle = (float)(Math.random() * (2*Math.PI));
-        float radius = (float)(Math.sqrt(Math.random()) * (BASE_SIZE-0.2f)); //for reasons
+        float radius = (float)(Math.sqrt(Math.random()) * BASE_SIZE);
 
         Vector2f spawnPos = new Vector2f((float)(getPosition().getX() + radius * Math.cos(angle)),
                 (float)(getPosition().getY() + radius * Math.sin(angle)));
@@ -86,8 +84,6 @@ public class Basis {
         // count flags
         numFlags = 0;
         for(Flag flag : flags) {
-        	float dis = flag.getPosition().distance(getPosition());
-        	System.out.println(dis);
         	if(flag.getPosition().distance(getPosition()) < BASE_SIZE)
         		++numFlags;
         }
@@ -109,8 +105,6 @@ public class Basis {
             case Circle:
                 baseCircle.draw(getPosition().getX() - baseCircle.getWidth() * 0.5f * IMAGE_SCALE,
                         getPosition().getY() - baseCircle.getHeight() * 0.5f * IMAGE_SCALE, IMAGE_SCALE);
-                graphics.setColor(Color.pink);
-                graphics.fillRect(getPosition().getX()-0.05f, getPosition().getY()-0.05f, 0.1f, 0.1f);
                 break;
 
             case Raute:
@@ -127,7 +121,7 @@ public class Basis {
     }
 
     public Vector2f getPosition() {
-        return baseMiddlePosition;
+        return basePosition;
     }
 
     public Player getOwnedBy() {

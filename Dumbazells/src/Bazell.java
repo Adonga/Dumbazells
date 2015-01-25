@@ -46,7 +46,7 @@ public class Bazell {
 	
 	private boolean dead = false;
 	private int deadTimer = 0; 
-	static final int DEAD_DURATION = 200;
+	static final int DEAD_DURATION = 400;
 	
 	public boolean NeedsDelete() { return dead && deadTimer > DEAD_DURATION; }
 	
