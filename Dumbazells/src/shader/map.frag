@@ -12,7 +12,7 @@ float noise(vec2 co)
 	float noise = 0.0;
 	for(int octave = 1; octave < 3; ++ octave)
 	{
-		vec2 coord = co * vec2(16.0, 8.0) * octave;
+		vec2 coord = co * vec2(16.0, 8.0) * float(octave);
 		vec2 floored = floor(coord);
 		vec2 interp = coord - floored;
 		
@@ -26,7 +26,7 @@ float noise(vec2 co)
 void main()
 {
     gl_FragColor = texture2D(tex, gl_TexCoord[0].xy);
-    
+
     float avg = gl_FragColor.x + gl_FragColor.y + gl_FragColor.z;
     
     // damp attenuation
@@ -38,8 +38,10 @@ void main()
     gl_FragColor.xyz = vec3(mix(gl_FragColor.xyz, gray, 0.3));
     
     // brighten
-    gl_FragColor.xyz += vec3((avg > 0.0 ? 0.2 : 0.5));
+    gl_FragColor.xyz += 0.15;  //vec3((avg > 0.0 ? 0.2 : 0.5));
     
     // add some noise
     gl_FragColor.xyz *= (noise(gl_TexCoord[0].xy) + 0.6) * 0.5;
+
+    gl_FragColor.xyz += rand(gl_TexCoord[0].xy) * (16.0/255.0 - 8.0/255.0);
 }

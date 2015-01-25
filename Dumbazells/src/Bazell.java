@@ -120,7 +120,7 @@ public class Bazell {
 		}
 		else if(position.x + circleImages[0].getWidth() * IMAGE_SCALE * 0.5f >= Game.GAME_COORD_SIZE.x)
 		{
-			position.x = 15.8f - circleImages[0].getWidth() * IMAGE_SCALE  * 0.5f;
+			position.x = 15.99f - circleImages[0].getWidth() * IMAGE_SCALE  * 0.5f;
 			direction.x = -direction.x;
 		}
 		if(position.y <= 0 )

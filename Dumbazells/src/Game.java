@@ -87,14 +87,12 @@ public class Game extends BasicGame
  				players[i].setCursorStartPosition(basen[i]);
  			}
 
-			flags = new Flag[] {
-					new Flag(Flag.randFlagPosition(basen), basen),
-					new Flag(Flag.randFlagPosition(basen), basen),
-					new Flag(Flag.randFlagPosition(basen), basen)
-			};
+			flags = new Flag[NUM_FLAGS];
+			for(int i =0 ; i< NUM_FLAGS; i++) {
+				flags[i] = new Flag(Flag.randFlagPosition(basen), basen);
+			}
 
 		} else if(!gameState.gameend){
-		
 			for (Player player : players) {
 				player.update(gc.getInput());
 			}
