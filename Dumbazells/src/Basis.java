@@ -6,7 +6,7 @@ import java.util.ArrayList;
 public class Basis {
 
     public static final int MAX_NUMBER_BAZELLS = 15;
-    public static final float BASE_SIZE = 1.0f;
+    public static final float BASE_SIZE = 1.2f;
     public static final float BASE_SIDE_DEADZONE = 0.3f;
     public static final int MAX_BAZELLS_IN_BASE = 5;
 
@@ -51,8 +51,8 @@ public class Basis {
         float angle = (float)(Math.random() * (2*Math.PI));
         float radius = (float)(Math.sqrt(Math.random()) * BASE_SIZE);
 
-        Vector2f spawnPos = new Vector2f((float)(this.basePosition.getX() + radius * Math.cos(angle)),
-                (float)(this.basePosition.getY() + radius * Math.sin(angle)));
+        Vector2f spawnPos = new Vector2f((float)(getPosition().getX() + radius * Math.cos(angle)),
+                (float)(getPosition().getY() + radius * Math.sin(angle)));
         
         if (ownBazells.size() < MAX_NUMBER_BAZELLS) {
             Bazell spawnedBazell = new Bazell(ownedBy.getControlerIndex(), new Vector2f(spawnPos));

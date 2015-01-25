@@ -25,13 +25,9 @@ public class GameStates {
 	private int i =0;
 	
 	private Image start;
-	private Image bg;
 	private Image gameOver;
 	private Image won;
 	private Image winner;
-	private Image trianlge;
-	private Image circle;
-	private Image raute;
 	private Image[] bazell = new Image[4];
 	
 	public GameStates() {
@@ -46,7 +42,6 @@ public class GameStates {
 			bazell[3]= new Image("images/Winner/Triangle.png");
 		
 		} catch (SlickException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -117,7 +112,6 @@ public class GameStates {
 			System.out.println(playersBase.baseType);
 			winner = new Image("images/Winner/"+playersBase.baseType+".png");
 		} catch (SlickException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
