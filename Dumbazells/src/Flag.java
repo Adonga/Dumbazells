@@ -54,14 +54,14 @@ public class Flag {
 
     public static Vector2f randFlagPosition(Basis[] basen) {
 
-        Vector2f pos = new Vector2f((float)Math.random() * (Game.GAME_COORD_SIZE.getX() - (Flag.FLAG_SIZE + Basis.BASE_SIDE_DEADZONE)),
-               (float)Math.random() * (Game.GAME_COORD_SIZE.getY() - (Flag.FLAG_SIZE + Basis.BASE_SIDE_DEADZONE)));
+        Vector2f pos = new Vector2f(Flag.FLAG_SIZE + Basis.BASE_SIDE_DEADZONE + (float)Math.random() * (Game.GAME_COORD_SIZE.getX() - 2*(Flag.FLAG_SIZE + Basis.BASE_SIDE_DEADZONE)),
+                Flag.FLAG_SIZE + Basis.BASE_SIDE_DEADZONE + (float)Math.random() * (Game.GAME_COORD_SIZE.getY() - 2*(Flag.FLAG_SIZE + Basis.BASE_SIDE_DEADZONE)));
 
         for (Basis basis : basen) {
             Vector2f posCopy = new Vector2f(pos);
             if (posCopy.sub(basis.getPosition()).length() < (Flag.FLAG_BASE_DEADZONE + Basis.BASE_SIZE/2)) {
-                pos = new Vector2f((float)Math.random() * (Game.GAME_COORD_SIZE.getX() - (Flag.FLAG_SIZE + Basis.BASE_SIDE_DEADZONE)),
-                        (float)Math.random() * (Game.GAME_COORD_SIZE.getY() - (Flag.FLAG_SIZE + Basis.BASE_SIDE_DEADZONE)));
+                pos = new Vector2f(Flag.FLAG_SIZE + Basis.BASE_SIDE_DEADZONE + (float)Math.random() * (Game.GAME_COORD_SIZE.getX() - 2*(Flag.FLAG_SIZE + Basis.BASE_SIDE_DEADZONE)),
+                        Flag.FLAG_SIZE + Basis.BASE_SIDE_DEADZONE + (float)Math.random() * (Game.GAME_COORD_SIZE.getY() - 2*(Flag.FLAG_SIZE + Basis.BASE_SIDE_DEADZONE)));
             }
         }
 
