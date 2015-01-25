@@ -15,6 +15,7 @@ float noise(vec2 co)
 		vec2 coord = co * vec2(16.0, 8.0) * float(octave);
 		vec2 floored = floor(coord);
 		vec2 interp = coord - floored;
+		interp = -cos(interp * 3.14159) * 0.5 + 0.5;
 		
 		noise += mix(mix(rand(floored + vec2(0.0, 0.0)), rand(floored + vec2(1.0, 0.0)), interp.x),
 			  	     mix(rand(floored + vec2(0.0, 1.0)), rand(floored + vec2(1.0, 1.0)), interp.x), interp.y);
@@ -36,7 +37,7 @@ void main()
     
 	// desaturate and brighten
 	vec3 gray = vec3(dot(vec3(0.2126,0.7152,0.0722), gl_FragColor.xyz));
-    gl_FragColor.xyz = vec3(mix(gl_FragColor.xyz, gray, 0.4)) * (gl_FragColor.g > 0.0 ? 1.2 : 1.6); // different brigthening for green
+    gl_FragColor.xyz = vec3(mix(gl_FragColor.xyz, gray, 0.4)) * (gl_FragColor.g > 0.0 ? 1.0 : 1.6); // different brigthening for green
     
     // brighten
     //gl_FragColor.xyz += vec3(0.4);
