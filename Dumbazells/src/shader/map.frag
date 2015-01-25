@@ -10,7 +10,7 @@ float rand(vec2 co)
 float noise(vec2 co)
 {
 	float noise = 0.0;
-	for(int octave = 1; octave < 3; ++ octave)
+	for(int octave = 1; octave < 3; ++ octave) // only 2 octaves!
 	{
 		vec2 coord = co * vec2(16.0, 8.0) * float(octave);
 		vec2 floored = floor(coord);
@@ -20,28 +20,29 @@ float noise(vec2 co)
 			  	     mix(rand(floored + vec2(0.0, 1.0)), rand(floored + vec2(1.0, 1.0)), interp.x), interp.y);
 	}
 	
-	return noise;
+	return noise * 0.5;
 }
 
 void main()
 {
     gl_FragColor = texture2D(tex, gl_TexCoord[0].xy);
-
-    float avg = gl_FragColor.x + gl_FragColor.y + gl_FragColor.z;
+    gl_FragColor.a = 1.0;
     
-    // damp attenuation
-	float lum = pow(avg, 0.1);
-	gl_FragColor.xyz /= lum;
-
-	// desaturate
+    float avg = clamp(gl_FragColor.x + gl_FragColor.y + gl_FragColor.z, 0.0, 1.0);
+    
+    // 0.02-1.0 avg at max
+    gl_FragColor /= avg; // color maxed
+    gl_FragColor *= clamp(avg * 10.0 - rand(gl_TexCoord[0].xy) * 0.25, 0.0, 1.0);
+    
+	// desaturate and brighten
 	vec3 gray = vec3(dot(vec3(0.2126,0.7152,0.0722), gl_FragColor.xyz));
-    gl_FragColor.xyz = vec3(mix(gl_FragColor.xyz, gray, 0.3));
+    gl_FragColor.xyz = vec3(mix(gl_FragColor.xyz, gray, 0.4)) * (gl_FragColor.g > 0.0 ? 1.2 : 1.6); // different brigthening for green
     
     // brighten
-    gl_FragColor.xyz += 0.15;  //vec3((avg > 0.0 ? 0.2 : 0.5));
+    //gl_FragColor.xyz += vec3(0.4);
     
     // add some noise
     gl_FragColor.xyz *= (noise(gl_TexCoord[0].xy) + 0.6) * 0.5;
-
-    gl_FragColor.xyz += rand(gl_TexCoord[0].xy) * (16.0/255.0 - 8.0/255.0);
+   	// add some grain
+   	gl_FragColor.xyz += rand(gl_TexCoord[0].xy) * 4.0/255.0;
 }
