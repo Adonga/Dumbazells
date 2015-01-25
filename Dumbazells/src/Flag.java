@@ -37,10 +37,10 @@ public class Flag {
         flagImg.draw(getPosition().getX() -flagImg.getWidth() * IMG_SCALE * 0.5f ,
         		getPosition().getY() -flagImg.getWidth() * IMG_SCALE * 0.5f
         		, IMG_SCALE);
-    	graphics.setColor(Color.pink);
+    	/*graphics.setColor(Color.pink);
     	graphics.fillRect(getPosition().getX() - flagImg.getWidth() * 0.5f * IMG_SCALE-0.05f
     			, getPosition().getY() - flagImg.getHeight() * 0.5f * IMG_SCALE -0.05f
-    			, 0.1f, 0.1f);
+    			, 0.1f, 0.1f);*/
     }
 
     public void setCarriedBy(Bazell carriedBy) {
