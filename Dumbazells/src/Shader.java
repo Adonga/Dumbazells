@@ -52,7 +52,7 @@ class Shader {
         GL20.glUseProgram(0);
     }
 
-    ByteBuffer loadSource(String fileName) {
+    private ByteBuffer getProgramCode(String fileName) {
         byte[] code = null;
         try {
             code = Files.readAllBytes(Paths.get(fileName));
@@ -60,9 +60,15 @@ class Shader {
             System.out.println(e.toString());
             e.printStackTrace();
         }
-        ByteBuffer buffer = ByteBuffer.allocateDirect(code.length);
-        buffer.put(code);
+       // ByteBuffer buffer = ByteBuffer.allocateDirect(code.length);
+       // buffer.put(code);
        // showBuffer(buffer);
+
+        ByteBuffer buffer = BufferUtils.createByteBuffer(code.length);
+        buffer.put(code);
+        buffer.flip();
+
+        //  showBuffer(shaderPro);
         return buffer;
     }
 
@@ -72,7 +78,7 @@ class Shader {
         System.out.println("");
     }
 
-    private ByteBuffer getProgramCode(String filename) {
+    /*private ByteBuffer getProgramCode(String filename) {
 
         InputStream fileInputStream = null;
         byte[] shaderCode = null;
@@ -97,7 +103,7 @@ class Shader {
 
       //  showBuffer(shaderPro);
         return shaderPro;
-    }
+    }*/
 
     public void setUniform(String location, int value) {
         GL20.glUniform1i(GL20.glGetUniformLocation(programID, location), value);

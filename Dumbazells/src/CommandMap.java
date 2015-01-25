@@ -24,7 +24,7 @@ public class CommandMap {
 	private Shader mapShader;
 	private Shader temporalSubtractShader;
 	
-	private static final int FADE_INTERVAL = 3;
+	private static final int FADE_INTERVAL = 5;
 	private int drawsSinceLastFade = 0;
 	
 	public CommandMap() throws SlickException {
