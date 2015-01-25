@@ -8,9 +8,9 @@ import org.lwjgl.opengl.*;
 
 
 public class CommandMap {
-	static final int RESOLUTION_X = (int)(Game.GAME_COORD_SIZE.x * 50);
-	static final int RESOLUTION_Y = (int)(Game.GAME_COORD_SIZE.y * 50);
-	static final int GRADIENT_FILTER_RADIUS = 8;
+	static final int RESOLUTION_X = (int)(Game.GAME_COORD_SIZE.x * 75);
+	static final int RESOLUTION_Y = (int)(Game.GAME_COORD_SIZE.y * 75);
+	static final int GRADIENT_FILTER_RADIUS = 12;
 	
 	static final private Color[] COMMANDCOLORS = { // please change also colorToCommandType if you change sth. here!
 		Color.black, //NOTHING
@@ -22,8 +22,9 @@ public class CommandMap {
 	private Image commandImage;
 	private Graphics commandImageG;
 	private Shader mapShader;
+	private Shader temporalSubtractShader;
 	
-	private static final int FADE_INTERVAL = 5; 
+	private static final int FADE_INTERVAL = 3;
 	private int drawsSinceLastFade = 0;
 	
 	public CommandMap() throws SlickException {
@@ -37,6 +38,8 @@ public class CommandMap {
 		mapShader.start();
 		mapShader.setUniform("tex", 0);
 		mapShader.end();
+
+		temporalSubtractShader = new Shader("shader/simple.vert", "shader/subtractnoise.frag");
 	}
 	
 	// Needs to be called during a Game.Draw !!
@@ -56,8 +59,11 @@ public class CommandMap {
 			
 			GL14.glBlendEquation(GL14.GL_FUNC_REVERSE_SUBTRACT);
 			
-			commandImageG.setColor(new Color(1.0f/255.0f, 1.0f/255.0f, 1.0f/255.0f, 0.0f));
+			//commandImageG.setColor(new Color(1.0f/255.0f, 1.0f/255.0f, 1.0f/255.0f, 0.0f));
+			temporalSubtractShader.start();
+			temporalSubtractShader.setUniform("time", (float)(System.currentTimeMillis() % 101) * 0.532219f);
 			commandImageG.fillRect(0, 0, RESOLUTION_X, RESOLUTION_Y);
+			temporalSubtractShader.end();
 			drawsSinceLastFade = 0;
 			
 			GL14.glBlendEquation(GL14.GL_FUNC_ADD);
