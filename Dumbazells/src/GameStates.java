@@ -84,15 +84,16 @@ public class GameStates {
 				}
 			}
 			
-			if(input.isKeyDown(Input.KEY_0)) {
+			if(input.isKeyDown(Input.KEY_0) ) {
 				registering = false;
-				return ++registeredPlayers;
+				if(registeredPlayers<4)
+					++registeredPlayers;
 			}
 		return registeredPlayers;
 	}
 	
 
-	public void restart(){
+	public void restart(Input input){
 		for(int i =0; i<controllers.length; i++){
 			if(controllers[i].isButtonPressed(6)){
 				if(gameend){}
@@ -103,6 +104,12 @@ public class GameStates {
 				registering = true;
 			}
 		}
+		if(input.isKeyDown(Input.KEY_SPACE)){
+			
+			gameend = false;
+			gamestart = false;
+			gameWon =false;
+			registering = true;}
 	}
 	
 	public void playerHasWon(Basis playersBase){

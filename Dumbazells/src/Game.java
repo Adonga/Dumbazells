@@ -112,11 +112,11 @@ public class Game extends BasicGame
 			for (Flag flag : flags) {
 				flag.update(gc, passedTimeMS);
 			}
-			gameState.restart();
+			gameState.restart(gc.getInput());
 			
 		}
 		else {
-			gameState.restart();
+			gameState.restart(gc.getInput());
 		}
 	}
 
