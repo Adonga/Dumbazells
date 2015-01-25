@@ -17,7 +17,7 @@ import org.newdawn.slick.geom.Vector2f;
 public class Game extends BasicGame
 {
 	public static final Vector2f GAME_COORD_SIZE = new Vector2f(16.0f, 9.0f);
-	public static final int NUM_FLAGS = 3;
+	public static final int NUM_FLAGS = 5;
 	public static final int MAX_NUM_PLAYERS = 4;
 	private static ScalableGame scalableGame;
 	
