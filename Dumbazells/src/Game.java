@@ -77,10 +77,10 @@ public class Game extends BasicGame
 										+ (float) Math.random()
 										* (GAME_COORD_SIZE.getY() - 2 * (Basis.BASE_SIZE + Basis.BASE_SIDE_DEADZONE))),baseTypes[i]);
 			}
-
-			flags = new Flag[] { new Flag(Flag.randFlagPosition(basen), basen),
-					new Flag(Flag.randFlagPosition(basen), basen),
-					new Flag(Flag.randFlagPosition(basen), basen)};
+			flags = new Flag[NUM_FLAGS];
+			for(int i =0 ; i< NUM_FLAGS;i++){
+			flags[i]=  new Flag(Flag.randFlagPosition(basen), basen);
+			}
 		}else if(!gameState.gameend){
 		
 			for (Player player : players) {
