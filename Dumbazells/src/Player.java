@@ -1,15 +1,14 @@
 import org.lwjgl.input.Controller;
 import org.lwjgl.input.Controllers;
 import org.lwjgl.util.vector.Vector2f;
-import org.newdawn.slick.Color;
-import org.newdawn.slick.Graphics;
-import org.newdawn.slick.Input;
+import org.newdawn.slick.*;
 import org.newdawn.slick.geom.Circle;
 
 
 public class Player {
 	static private final float cursorSpeed = 0.03f;
 	static private final float controllerDeadZone = 0.2f;
+	static private final float PLAYER_SCALE = 0.004f;
 	
 	private Circle paintCircle = new Circle(8.0f, 4.5f, 0.4f);
 	private CommandType nextCommandType;
@@ -18,6 +17,8 @@ public class Player {
 	private Controller controller = null;
 	
 	int i=0;
+
+	Image[] playerImages;
 	
 	Player(int controllerIndex) {
 		this.controllerIndex = controllerIndex;
@@ -34,7 +35,21 @@ public class Player {
 				++foundXboxControllerCount;
 			}
 		}
+
+		try {
+			playerImages = new Image[] {
+					new Image("images/player_circle.png"),
+					new Image("images/player_triangle.png"),
+					new Image("images/player_square.png"),
+					new Image("images/player_raute.png")
+			};
+		} catch (SlickException e) {
+			e.printStackTrace();
+		}
+
 	}
+
+
 	
 	public void update(Input input) {
 		
@@ -97,9 +112,12 @@ public class Player {
 		if(nextCommandType != null) {
 			commandMap.paint(paintCircle, nextCommandType);
 		}
-		
+
 		g.setColor(Color.pink);
-		g.draw(paintCircle);
+		//g.draw(paintCircle);
+
+		playerImages[controllerIndex].draw(paintCircle.getCenterX() - playerImages[controllerIndex].getWidth() * PLAYER_SCALE * 0.5f,
+				paintCircle.getCenterY() - playerImages[controllerIndex].getHeight() * PLAYER_SCALE * 0.5f, PLAYER_SCALE);
 	}
 
 	public int getControlerIndex() {
