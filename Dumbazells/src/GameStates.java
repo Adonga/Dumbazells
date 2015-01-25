@@ -16,6 +16,8 @@ public class GameStates {
 	public boolean gameend;
 	public boolean gameWon;
 	
+	final float BAZELL_SCALE = 0.025f;
+
 	private Controller[] controllers;
 	private boolean[] registerdController;
 	
@@ -27,13 +29,26 @@ public class GameStates {
 	private Image gameOver;
 	private Image won;
 	private Image winner;
-	
+	private Image trianlge;
+	private Image circle;
+	private Image raute;
+	private Image[] bazell = new Image[4];
 	
 	public GameStates() {
 		
 	}
 
 	public int init(Input input) {
+		try {
+			bazell[0]= new Image("images/Winner/Circle.png");
+			bazell[1]= new Image("images/Winner/Raute.png");
+			bazell[2]= new Image("images/Winner/Square.png");
+			bazell[3]= new Image("images/Winner/Triangle.png");
+		
+		} catch (SlickException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		int connectedControllers = 0;
 //		registeredPlayers = 0;
@@ -69,6 +84,7 @@ public class GameStates {
 				for(int i =0; i<controllers.length; i++){
 					if(controllers[i].isButtonPressed(7) && registeredPlayers>0){
 						registering = false;
+//						gameend = true; // for insta gameover
 					}
 				}
 			}
@@ -120,7 +136,9 @@ public class GameStates {
 			start.draw(0, 0, 0.0158f);
 			for (int i =0; i < registeredPlayers; i++)
 			{
-				g.fillRect(4+2*i, 7, 1, 1);
+//				g.fillRect(4+2*i, 7, 1, 1);
+				bazell[i].draw(4+2*i, 6.5f, BAZELL_SCALE * 0.4f);
+				
 			}
 		}
 		else if (gameend && !gameWon)
@@ -133,7 +151,7 @@ public class GameStates {
 					e.printStackTrace();
 				}
 			}
-			gameOver.draw(0, 0, 0.016f);
+			gameOver.draw(0, 0, 0.0156f);
 		}
 		else if(gameend && gameWon){
 			if(i!=0){
@@ -144,9 +162,8 @@ public class GameStates {
 					e.printStackTrace();
 				}
 			}
-			float SCALE = 0.025f;
 			won.draw( 0, 0, 0.016f);
-			winner.draw(8-winner.getWidth()*0.5f*SCALE,0,SCALE);
+			winner.draw(8-winner.getWidth()*0.5f*BAZELL_SCALE,0,BAZELL_SCALE);
 		}	
 	}
 	

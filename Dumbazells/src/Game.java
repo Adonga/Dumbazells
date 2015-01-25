@@ -99,6 +99,9 @@ public class Game extends BasicGame
 	        	else return 0;
 	        });
 			
+
+//			gameState.playerHasWon(basen[0]); //for insta win
+
 			for (Basis base : basen) {
 				base.update(gc, commandMap, flags, allBazells);
 				if(base.GetNumFlags() >= 3) {
