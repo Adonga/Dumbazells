@@ -5,12 +5,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.lwjgl.opengl.GL11;
-import org.newdawn.slick.AppGameContainer;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Graphics;
-import org.newdawn.slick.BasicGame;
-import org.newdawn.slick.ScalableGame;
-import org.newdawn.slick.SlickException;
+import org.newdawn.slick.*;
 import org.newdawn.slick.geom.Vector2f;
 import org.newdawn.slick.opengl.renderer.*;
 
@@ -44,6 +39,7 @@ public class Game extends BasicGame
 		commandMap = new CommandMap();
 
 		mapRenderer = new MapRenderer();
+
 	}
 
 	@Override
@@ -110,7 +106,7 @@ public class Game extends BasicGame
 	        });
 			
 
-//			gameState.playerHasWon(basen[0]); //for insta win
+			gameState.playerHasWon(basen[0]); //for insta win
 
 			for (Basis base : basen) {
 				base.update(gc, commandMap, flags, allBazells);
